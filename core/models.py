@@ -22,6 +22,7 @@ class SnakeVersion(models.Model):
     comment = models.CharField(max_length=1000, blank=True, null=True)
     version = models.IntegerField()
     server_error_message = models.TextField(blank=True, null=True)
+    code_compiled = models.BooleanField(default=False, null=False)
 
     def save(self, *args, **kwargs):
         if not self.version:
