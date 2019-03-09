@@ -15,6 +15,12 @@ class SnakeVersion(models.Model):
         get_latest_by = "created"
         unique_together = ('user', 'version')
 
+    COMPILE_STATE_CHOICES = (
+            ('not_compiled', 'Not compiled yet'),
+            ('successful',   'Compiled successfully'),
+            ('failed',       'Compilation failed'),
+            )
+
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     parent = models.ForeignKey("SnakeVersion", blank=True, null=True, on_delete=models.SET_NULL)
     created = models.DateTimeField(default=now, blank=True)
@@ -22,7 +28,8 @@ class SnakeVersion(models.Model):
     comment = models.CharField(max_length=1000, blank=True, null=True)
     version = models.IntegerField()
     server_error_message = models.TextField(blank=True, null=True)
-    code_compiled = models.BooleanField(default=False, null=False)
+    compile_state = models.CharField(default='not_compiled', max_length=12, choices=COMPILE_STATE_CHOICES)
+    build_log = models.TextField(null=True)
 
     def save(self, *args, **kwargs):
         if not self.version:
