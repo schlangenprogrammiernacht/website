@@ -26,7 +26,7 @@ function setupEditor()
 {
     editor = ace.edit("editor");
     editor.setTheme("ace/theme/idle_fingers");
-    editor.session.setMode("ace/mode/lua");
+    editor.session.setMode("ace/mode/c_cpp");
     editor.setShowPrintMargin(false);
     let textarea = $('#code').hide();
     editor.getSession().setValue(textarea.val());
