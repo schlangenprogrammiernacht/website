@@ -156,3 +156,10 @@ def snake_restart(request):
         response = {'message': 'requesting kill of any running snake version (no activate snake version)'}
 
     return JsonResponse(response)
+
+
+@login_required
+def buildlogs(request):
+    profile = get_user_profile(request.user)
+    snake = profile.active_snake # SnakeVersion(user=request.user)
+    return render(request, 'ide/buildlogs.html', {'snake': snake, 'profile': profile})

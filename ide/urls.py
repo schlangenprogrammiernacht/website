@@ -11,4 +11,5 @@ urlpatterns = [
     path('delete/<int:snake_id>', views.snake_delete, name='snake_delete'),
     path('disable', views.snake_disable, name='snake_disable'),
     path('restart', views.snake_restart, name='snake_restart'),
+    path('buildlogs', views.buildlogs, name='buildlogs'),
 ]
