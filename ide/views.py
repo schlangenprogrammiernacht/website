@@ -32,7 +32,7 @@ def snake_list(request):
 @login_required
 def snake_create(request):
     snake = SnakeVersion(user=request.user)
-    snake.code = render_to_string('ide/initial-bot.lua')
+    snake.code = render_to_string('ide/initial-bot.cpp')
     return snake_edit(request, snake)
 
 
