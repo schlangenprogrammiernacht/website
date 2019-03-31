@@ -19,6 +19,7 @@ class SnakeVersion(models.Model):
             ('not_compiled', 'Not compiled yet'),
             ('successful',   'Compiled successfully'),
             ('failed',       'Compilation failed'),
+            ('crashed',      'Compilation successful, but init failed'),
             )
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
