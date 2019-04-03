@@ -91,6 +91,17 @@ class ServerCommand(models.Model):
     result_msg = models.TextField(blank=True, null=True, editable=False)
 
 
+class LiveStats(models.Model):
+    last_update = models.DateTimeField()
+    fps = models.FloatField()
+    current_frame = models.IntegerField()
+    running_bots = models.IntegerField()
+    start_queue_len = models.IntegerField()
+    stop_queue_len = models.IntegerField()
+    living_mass = models.FloatField()
+    dead_mass = models.FloatField()
+
+
 def create_key():
     return str(uuid.uuid4())
 
