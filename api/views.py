@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
-from core.models import ApiKey, SnakeVersion, ServerCommand, get_user_profile
+from core.models import ApiKey, SnakeVersion, ServerCommand, get_user_profile, LiveStats
 
 class bot_api(object):
     def __init__(self, f):
@@ -170,3 +170,25 @@ def delete_api_key(request, key_id):
     key = get_object_or_404(ApiKey, user=request.user, id=key_id)
     key.delete()
     return redirect('api_keys_list')
+
+#########
+# STATS #
+#########
+
+def stats_dict(v):
+    return {
+            "last_update": v.last_update,
+            "fps": v.fps,
+            "current_frame": v.current_frame,
+            "running_bots": v.running_bots,
+            "start_queue_len": v.start_queue_len,
+            "stop_queue_len": v.stop_queue_len,
+            "living_mass": v.living_mass,
+            "dead_mass": v.dead_mass
+           }
+
+@require_http_methods(['GET'])
+#@login_required()
+def stats(request):
+    stats = get_object_or_404(LiveStats, id=1)
+    return JsonResponse(stats_dict(stats))
