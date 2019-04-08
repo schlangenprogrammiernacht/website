@@ -4,6 +4,7 @@ import os
 import time
 import subprocess
 import tempfile
+import datetime
 
 import Programmierspiel.settings as settings
 from django import setup as django_setup
@@ -14,6 +15,9 @@ Requirements:
   ODBC Driver: https://www.microsoft.com/en-ca/download/details.aspx?id=36434
   Django Engine: https://pypi.org/project/django-pyodbc-azure/
 """
+
+def now():
+    return datetime.datetime.utcnow().isoformat()
 
 django_settings.configure(
     **settings.__dict__)
@@ -33,12 +37,12 @@ while True:
         codefilename = codefile.name
         codefile.close()
 
-        print(f"Code written to {codefilename}")
+        print(f"{now()}: Code written to {codefilename}")
 
         cmd = [BUILD_SCRIPT, str(s.id), codefilename]
-        print(f"Running: {cmd}")
+        print(f"{now()}: Running: {cmd}")
         proc = subprocess.run(cmd, cwd=BUILD_CWD, capture_output=True)
-        print(f"subprocess completed: {proc.returncode}")
+        print(f"{now()}: subprocess completed: {proc.returncode}")
 
         buildlog  = "--------- STDOUT ---------\n"
         buildlog += proc.stdout.decode('utf-8') + "\n\n"
@@ -55,6 +59,6 @@ while True:
         s.save()
 
         os.unlink(codefilename)
-        print(f"{codefilename} deleted.")
+        print(f"{now()}: {codefilename} deleted.")
 
     time.sleep(10)
