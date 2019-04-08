@@ -106,8 +106,10 @@ LOGIN_URL = '/login/'
 
 STATIC_URL = '/static/'
 
-HIGHSCORE_DT_FROM = datetime.datetime(1, 1, 1, 0, 0, tzinfo=pytz.UTC)
-HIGHSCORE_DT_TILL = datetime.datetime(9999, 12, 31, 23, 59, tzinfo=pytz.UTC)
+# Set either FROM and TILL or RANGE to select which games to include in the highscore
+HIGHSCORE_DT_FROM = None #datetime.datetime(1, 1, 1, 0, 0, tzinfo=pytz.UTC)
+HIGHSCORE_DT_TILL = None #datetime.datetime(9999, 12, 31, 23, 59, tzinfo=pytz.UTC)
+HIGHSCORE_DT_RANGE = datetime.timedelta(hours=24)
 HIGHSCORE_BLACKLIST = []
 
 exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "local_settings.py")).read()) in globals()

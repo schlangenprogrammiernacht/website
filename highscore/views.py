@@ -3,12 +3,22 @@ from django.db.models import F, Max, ExpressionWrapper, FloatField
 from core.models import SnakeGame
 from django.db import models
 from django.conf import settings
+from django.utils import timezone
+
+import datetime
 
 
 def get_relevant_games():
+    if settings.HIGHSCORE_DT_FROM and settings.HIGHSCORE_DT_TILL:
+        start_dt = settings.HIGHSCORE_DT_FROM
+        end_dt = settings.HIGHSCORE_DT_TILL
+    else:
+        end_dt = timezone.now()
+        start_dt = end_dt - settings.HIGHSCORE_DT_RANGE
+
     return SnakeGame.objects.filter(
-        end_date__gte=settings.HIGHSCORE_DT_FROM,
-        end_date__lte=settings.HIGHSCORE_DT_TILL
+        end_date__gte=start_dt,
+        end_date__lte=end_dt
     ).exclude(
         user__username__in=settings.HIGHSCORE_BLACKLIST
     )
