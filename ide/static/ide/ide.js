@@ -155,7 +155,7 @@ function updateCompileState(state)
         compileStateNode.innerHTML = "&#x2714; Compilation successful";
     } else if(state == "failed") {
         compileStateNode.innerHTML = '&#x26A1; Compilation failed (<a href="/snake/buildlogs">Build log</a>)';
-    } else if(state == "successful") {
+    } else if(state == "crashed") {
         compileStateNode.innerHTML = "&#x1F480; Crashed on startup";
     }
 }
