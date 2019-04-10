@@ -61,6 +61,17 @@ def get_version(request, version_id):
     return JsonResponse(full_version_dict(v))
 
 
+@require_http_methods(['GET'])
+@bot_api
+def get_compile_state(request):
+    profile = get_user_profile(request.user)
+    snake = profile.active_snake
+    if snake:
+        return JsonResponse({'compile_state': str(snake.compile_state)})
+    else:
+        return JsonResponse({})
+
+
 @require_http_methods(['POST', 'PUT'])
 @bot_api
 def put_version(request):

@@ -8,6 +8,7 @@ $(function() {
     setupPreview();
     setupToolbar();
     setupShortcuts();
+    setupCompileState();
 
     $.ajaxSetup({
         beforeSend: function(xhr, settings) {
@@ -125,6 +126,40 @@ function setupShortcuts()
     });
 }
 
+function setupCompileState()
+{
+    window.setInterval(function() {
+        $.get("/api/v1/compile_state", function (data, status) {
+            if (status!='success') {
+                console.log('error while loading compile_state: ' + status);
+                return;
+            }
+
+            if(!data) {
+                // no active snake version
+                return;
+            }
+
+            updateCompileState(data.compile_state);
+        });
+    }, 5000);
+}
+
+function updateCompileState(state)
+{
+    let compileStateNode = document.getElementById('compile_state')
+
+    if(state == "not_compiled") {
+        compileStateNode.innerHTML = "&#x1F527; Compiling...";
+    } else if(state == "successful") {
+        compileStateNode.innerHTML = "&#x2714; Compilation successful";
+    } else if(state == "failed") {
+        compileStateNode.innerHTML = "&#x26A1; Compilation failed";
+    } else if(state == "successful") {
+        compileStateNode.innerHTML = "&#x1F480; Crashed on startup";
+    }
+}
+
 function showModal(el, ok_func)
 {
     let dialog = $(el);
@@ -173,6 +208,10 @@ function save(action, title)
 
         editor.session.getUndoManager().markClean()
     });
+
+    if(action == 'run') {
+        updateCompileState('not_compiled');
+    }
 }
 
 function showLoadDialog(data)

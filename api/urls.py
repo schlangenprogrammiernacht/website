@@ -10,6 +10,7 @@ urlpatterns = [
     path('version/active/kill', views.kill_bot, name='kill_bot'),
 
     path('version/activate/<int:version_id>', views.activate_version, name='activate_version'),
+    path('compile_state', views.get_compile_state, name='get_compile_state'),
     path('viewer_key', views.get_viewer_key, name='get_viewer_key'),
 
     path('keys', views.list_api_keys, name='api_keys_list'),
