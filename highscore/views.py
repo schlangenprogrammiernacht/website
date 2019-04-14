@@ -65,7 +65,18 @@ def score(request):
             usr = False
     else:
         usr = False
-    return table(request, data, usr, 'Highscore', 'highscore_maxage')
+    return table(request, data, usr, 'Highscore', 'highscore_maxmass')
+
+
+def maxmass(request):
+    data = get_relevant_games().values('user__username').annotate(score=Max('maximum_mass')).order_by('-score')
+    if request.user.is_authenticated:
+        usr = get_relevant_games().filter(user=request.user).aggregate(score=Max('maximum_mass'))
+        if usr['score'] == None:
+            usr = False
+    else:
+        usr = False
+    return table(request, data, usr, 'Anytime Highscore', 'highscore_maxage')
 
 
 def maxage(request):

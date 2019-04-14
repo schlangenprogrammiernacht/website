@@ -72,6 +72,7 @@ class SnakeGame(models.Model):
     start_frame = models.IntegerField(blank=True, null=True)
     end_frame = models.IntegerField(blank=True, null=True)
     killer = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name="games_won")
+    maximum_mass = models.FloatField(blank=True, null=True)
     final_mass = models.FloatField(blank=True, null=True)
     natural_food_consumed = models.FloatField(blank=True, null=True)
     carrison_food_consumed = models.FloatField(blank=True, null=True)
