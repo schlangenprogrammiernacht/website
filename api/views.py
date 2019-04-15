@@ -186,20 +186,40 @@ def delete_api_key(request, key_id):
 # STATS #
 #########
 
-def stats_dict(v):
+def stats_dict(livestats_val, buildstats_dict):
+    if livestats_val:
+        livestats = {
+                "last_update": livestats_val.last_update,
+                "fps": livestats_val.fps,
+                "current_frame": livestats_val.current_frame,
+                "running_bots": livestats_val.running_bots,
+                "start_queue_len": livestats_val.start_queue_len,
+                "stop_queue_len": livestats_val.stop_queue_len,
+                "living_mass": livestats_val.living_mass,
+                "dead_mass": livestats_val.dead_mass
+            }
+    else:
+        livestats = {}
+
+    if not buildstats_dict:
+        buildstats_dict = {}
+
     return {
-            "last_update": v.last_update,
-            "fps": v.fps,
-            "current_frame": v.current_frame,
-            "running_bots": v.running_bots,
-            "start_queue_len": v.start_queue_len,
-            "stop_queue_len": v.stop_queue_len,
-            "living_mass": v.living_mass,
-            "dead_mass": v.dead_mass
-           }
+            "livestats": livestats,
+            "buildstats": buildstats_dict
+        }
 
 @require_http_methods(['GET'])
 #@login_required()
 def stats(request):
-    stats = get_object_or_404(LiveStats, id=1)
-    return JsonResponse(stats_dict(stats))
+    try:
+        livestats = LiveStats.objects.get(id=1)
+    except LiveStats.DoesNotExist:
+        livestats = None
+
+    buildstats = {}
+    for tup in SnakeVersion.COMPILE_STATE_CHOICES:
+        state = tup[0]
+        buildstats[state] = SnakeVersion.objects.filter(compile_state=state).count()
+
+    return JsonResponse(stats_dict(livestats, buildstats))
