@@ -57,6 +57,7 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     viewer_key = models.BigIntegerField(unique=True)
     active_snake = models.ForeignKey(SnakeVersion, null=True, blank=True, on_delete=models.SET_NULL)
+    persistent_data = models.BinaryField(max_length=2**20, null=True, blank=True)
 
     def save(self, *args, **kwargs):
         if not self.viewer_key:
