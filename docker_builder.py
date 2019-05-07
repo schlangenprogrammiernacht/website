@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import re
 import os
 import time
 import subprocess
@@ -28,8 +29,15 @@ import core.models as m
 BUILD_CWD="../gameserver/docker4bots/"
 BUILD_SCRIPT="./1_build_spn_cpp_bot.sh"
 
+cleanup_re = re.compile(r"([^a-z0-9+_-]+)", re.IGNORECASE)
+
 while True:
     versions2build = m.SnakeVersion.objects.filter(compile_state='not_compiled')
+
+    if not versions2build:
+        print("Nothing to do, sleeping for some time...")
+        time.sleep(10)
+        continue
 
     for s in versions2build:
         codefile = tempfile.NamedTemporaryFile(mode='w', delete=False)
@@ -37,9 +45,11 @@ while True:
         codefilename = codefile.name
         codefile.close()
 
+        clean_name = cleanup_re.sub("_", s.user.username)
+
         print(f"{now()}: Code written to {codefilename}")
 
-        cmd = [BUILD_SCRIPT, str(s.id), codefilename]
+        cmd = [BUILD_SCRIPT, str(s.id), clean_name, codefilename]
         print(f"{now()}: Running: {cmd}")
         proc = subprocess.run(cmd, cwd=BUILD_CWD, capture_output=True)
         print(f"{now()}: subprocess completed: {proc.returncode}")
@@ -60,5 +70,3 @@ while True:
 
         os.unlink(codefilename)
         print(f"{now()}: {codefilename} deleted.")
-
-    time.sleep(10)
