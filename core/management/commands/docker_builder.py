@@ -13,48 +13,55 @@ def now():
 class Command(BaseCommand):
     help = "compile snake versions"
 
+    def __init__(self):
+        self.cleanup_re = re.compile(r"([^a-z0-9+_-]+)", re.IGNORECASE)
+
     def handle(self, *args, **options):
-        BUILD_CWD="../gameserver/docker4bots/"
-        BUILD_SCRIPT="./1_build_spn_cpp_bot.sh"
-
-        cleanup_re = re.compile(r"([^a-z0-9+_-]+)", re.IGNORECASE)
-
         while True:
             versions2build = SnakeVersion.objects.filter(compile_state='not_compiled')
 
-            if not versions2build:
-                print("Nothing to do, sleeping for some time...")
-                time.sleep(10)
-                continue
+            if versions2build:
+                for s in versions2build:
+                    self.build_version(s)
+            else:
+                print("Nothing to do, taking a nap...")
+                time.sleep(5)
 
-            for s in versions2build:
-                codefile = tempfile.NamedTemporaryFile(mode='w', delete=False)
-                codefile.write(s.code)
-                codefilename = codefile.name
-                codefile.close()
+    def build_version(self, snake_version):
+        return_code, stdout, stderr = self.run_build_script(snake_version)
+        snake_version.build_log = self.format_build_log(stdout, stderr)
+        snake_version.compile_state = 'successful' if return_code == 0 else 'failed'
+        snake_version.save()
 
-                clean_name = cleanup_re.sub("_", s.user.username)
+    def run_build_script(self, snake_version):
+        BUILD_CWD = "../gameserver/docker4bots/"
+        BUILD_SCRIPT = "./1_build_spn_cpp_bot.sh"
 
-                print(f"{now()}: Code written to {codefilename}")
+        code_file = self.write_code_to_temp_file(snake_version)
+        print(f"{now()}: Code written to {code_file}")
 
-                cmd = [BUILD_SCRIPT, str(s.id), clean_name, codefilename]
-                print(f"{now()}: Running: {cmd}")
-                proc = subprocess.run(cmd, cwd=BUILD_CWD, capture_output=True)
-                print(f"{now()}: subprocess completed: {proc.returncode}")
+        try:
+            clean_name = self.cleanup_username(snake_version.user.username)
+            cmd = [BUILD_SCRIPT, str(snake_version.id), clean_name, code_file]
+            print(f"{now()}: Running: {cmd}")
+            sp = subprocess.run(cmd, cwd=BUILD_CWD, capture_output=True)
+            print(f"{now()}: subprocess completed: {sp.returncode}")
 
-                buildlog  = "--------- STDOUT ---------\n"
-                buildlog += proc.stdout.decode('utf-8') + "\n\n"
-                buildlog += "--------- STDERR ---------\n"
-                buildlog += proc.stderr.decode('utf-8') + "\n"
+            return sp.returncode, sp.stdout.decode('utf-8'), sp.stderr.decode('utf-8')
+        finally:
+            os.unlink(code_file)
+            print(f"{now()}: {code_file} deleted.")
 
-                s.build_log = buildlog
+    @staticmethod
+    def write_code_to_temp_file(snake_version):
+        with tempfile.NamedTemporaryFile(mode='w', delete=False) as f:
+            f.write(snake_version.code)
+            return f.name
 
-                if proc.returncode == 0:
-                    s.compile_state = 'successful'
-                else:
-                    s.compile_state = 'failed'
+    def cleanup_username(self, username):
+        return self.cleanup_re.sub("_", username)
 
-                s.save()
+    @staticmethod
+    def format_build_log(stdout, stderr):
+        return  "--------- STDOUT ---------\n{0}\n\n--------- STDERR ---------\n{1}\n".format(stdout, stderr)
 
-                os.unlink(codefilename)
-                print(f"{now()}: {codefilename} deleted.")
