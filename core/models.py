@@ -32,6 +32,14 @@ class SnakeVersion(models.Model):
     compile_state = models.CharField(default='not_compiled', max_length=12, choices=COMPILE_STATE_CHOICES)
     build_log = models.TextField(null=True)
 
+    def create_new_if_changed(self, code, comment):
+        if self.code == code and self.comment == comment:
+            return self
+        else:
+            new_version = SnakeVersion(user=self.user, parent=self, code=code, comment=comment)
+            new_version.save()
+            return new_version
+
     def save(self, *args, **kwargs):
         if not self.version:
             self.version = self.get_max_version_number() + 1
