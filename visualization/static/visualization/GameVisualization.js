@@ -14,16 +14,19 @@ function GameVisualization(assets, snakeMoveStrategy, container)
     this.foodItems = {};
 
     this.app = new PIXI.Application({'transparent':false});
-    this.txHead = PIXI.Texture.fromImage(assets['head.png']);
-    this.txBody = PIXI.Texture.fromImage(assets['body.png']);
-    this.txFood = PIXI.Texture.fromImage(assets['food.png']);
+    this.txHead = PIXI.Texture.from(assets['head.png']);
+    this.txBody = PIXI.Texture.from(assets['body.png']);
+    this.txFood = PIXI.Texture.from(assets['food.png']);
 
     this.viewport = new PIXI.extras.Viewport({
         screenWidth: this.container.clientWidth,
         screenHeight: this.container.clientHeight,
         worldWidth: this.world_size_x,
-        worldHeight: this.world_size_y
+        worldHeight: this.world_size_y,
+        interaction: this.app.renderer.plugins.interaction
     });
+    this.viewport.ticker.remove(this.viewport.tickerFunction);
+
     this.app.stage.addChild(this.viewport);
     this.viewport.drag().pinch().wheel();
 
@@ -237,6 +240,7 @@ GameVisualization.prototype.HandleBotMoveHeadMessage = function(bot_id, mass, po
     if (bot_id in this.snakes)
     {
         this.snakeMoveStrategy.NewStyleMove(this.snakes[bot_id], mass, positions);
+        this.viewport.update();
     }
 };
 
