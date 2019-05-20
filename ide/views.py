@@ -65,17 +65,14 @@ def snake_save(request):
     if code is None:
         return HttpResponseBadRequest('code not defined')
 
-    # TODO syntax check lua code?
-
     comment = json_req.get('comment')
 
     try:
-        parent = SnakeVersion.objects.get(pk=json_req.get('parent'), user=request.user)
+        snake = SnakeVersion.objects.get(pk=json_req.get('parent'), user=request.user)
+        snake = snake.create_new_if_changed(code=code, comment=comment)
     except SnakeVersion.DoesNotExist:
-        parent = None
-
-    snake = SnakeVersion(user=request.user, code=code, comment=comment, parent=parent)
-    snake.save()
+        snake = SnakeVersion(user=request.user, code=code, comment=comment, parent=None)
+        snake.save()
 
     if action == "run":
         snake.activate()
@@ -93,11 +90,10 @@ def snake_edit(request, snake):
     if form.is_valid():
         posted_code = form.cleaned_data.get('code')
         posted_comment = form.cleaned_data.get('comment', '')
-        new_version = SnakeVersion(user=request.user, parent=snake, code=posted_code, comment=posted_comment)
-        new_version.save()
-        new_version.activate()
-        send_kill_command(new_version.user)
-        return redirect('snake_edit', snake_id=new_version.id)
+        snake = snake.create_new_if_changed(code=posted_code, comment=posted_comment)
+        snake.activate()
+        send_kill_command(snake.user)
+        return redirect('snake_edit', snake_id=snake.id)
 
     return render(request, 'ide/ide.html', {'form': form, 'snake': snake, 'profile': get_user_profile(request.user)})
 
