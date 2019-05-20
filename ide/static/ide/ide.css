@@ -6,12 +6,13 @@
     display:grid;
 
     grid-template-columns: 2fr 1fr;
-    grid-template-rows: 4fr 1fr;
+    grid-template-rows: 4fr 0fr 1fr;
     grid-template-areas:
         "editor preview"
-        "log preview"
-        "log compile_state"
-        "log tools";
+        "tools preview"
+        "logviews preview"
+        "logviews preview"
+        "logtabs preview";
     grid-column-gap: 5px;
     grid-row-gap: 5px;
 }
@@ -28,6 +29,12 @@
     overflow:hidden;
 }
 
+#logtabs {
+    grid-area: logtabs;
+    background-color: #000000A0;
+    overflow:hidden;
+}
+
 #compile_state {
     grid-area: compile_state;
     font-size:18px;
@@ -35,12 +42,16 @@
     padding: 5px;
 }
 
-#log {
-    grid-area: log;
+#logviews {
+    grid-area: logviews;
+}
+
+#logviews>div {
     background-color: #00000080;
     font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
     font-size: 11pt;
     overflow: scroll;
+    height: 100%;
 }
 
 #log div {

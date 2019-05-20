@@ -35,6 +35,7 @@ def version_dict(v):
         'version': v.version,
         'created': v.created,
         'comment': v.comment,
+        'compile_state': v.compile_state,
         'error': v.server_error_message
     }
 
@@ -42,6 +43,7 @@ def version_dict(v):
 def full_version_dict(v):
     d = version_dict(v)
     d['code'] = v.code
+    d['build_log'] = v.build_log
     return d
 
 
@@ -67,7 +69,7 @@ def get_compile_state(request):
     profile = get_user_profile(request.user)
     snake = profile.active_snake
     if snake:
-        return JsonResponse({'compile_state': str(snake.compile_state)})
+        return JsonResponse({'compile_state': str(snake.compile_state), 'build_log': snake.build_log})
     else:
         return JsonResponse({})
 

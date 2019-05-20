@@ -1,14 +1,15 @@
 let logWindow = null;
 let game = null;
 let editor = null;
+let addLogLine_switches_tab = false;
 
 $(function() {
     logWindow = document.getElementById('log');
+    setupTabs();
     setupEditor();
     setupPreview();
     setupToolbar();
     setupShortcuts();
-    setupCompileState();
 
     $.ajaxSetup({
         beforeSend: function(xhr, settings) {
@@ -17,11 +18,34 @@ $(function() {
             }
         }
     });
+
+    pollCompileState();
 });
 
 $(window).resize(function() {
     game.vis.Resize();
 });
+
+function show_build_output()
+{
+    $('#log').hide();
+    $('#build_log').show();
+    addLogLine_switches_tab = false;
+}
+
+function show_log_output()
+{
+    $('#build_log').hide();
+    $('#log').show();
+    addLogLine_switches_tab = true;
+}
+
+function setupTabs()
+{
+    $('#show_build_output').click(show_build_output);
+    $('#show_log_output').click(show_log_output);
+    show_build_output();
+}
 
 function setupEditor()
 {
@@ -126,37 +150,44 @@ function setupShortcuts()
     });
 }
 
-function setupCompileState()
+function pollCompileState()
 {
-    window.setInterval(function() {
-        $.get("/api/v1/compile_state", function (data, status) {
-            if (status!='success') {
-                console.log('error while loading compile_state: ' + status);
-                return;
-            }
-
-            if(!data) {
-                // no active snake version
-                return;
-            }
-
-            updateCompileState(data.compile_state);
-        });
-    }, 5000);
+    $.ajax({
+        url: '/api/v1/compile_state',
+        dataType: 'json',
+        success: updateCompileState,
+        error: function()
+        {
+            window.setTimeout(pollCompileState, 10000);
+        }
+    });
 }
 
-function updateCompileState(state)
+function updateCompileState(data)
 {
-    let compileStateNode = document.getElementById('compile_state')
+    let state = data.compile_state;
+    let build_log = data.build_log;
 
-    if(state == "not_compiled") {
-        compileStateNode.innerHTML = "&#x1F527; Compiling...";
-    } else if(state == "successful") {
-        compileStateNode.innerHTML = "&#x2714; Compilation successful";
+    if (state == "not_compiled")
+    {
+        window.setTimeout(pollCompileState, 1000);
+        return;
+    }
+    else
+    {
+        addLogLine_switches_tab = false;
+        $("#build_log_content").text(build_log);
+        show_build_output();
+    }
+
+    if (state == "successful")
+    {
+        window.setTimeout(function() { addLogLine_switches_tab = true; }, 5000);
+        $.growl.notice({ message: "&#x2714; Compilation successful" });
     } else if(state == "failed") {
-        compileStateNode.innerHTML = '&#x26A1; Compilation failed (<a href="/snake/buildlogs">Build log</a>)';
+        $.growl.error({ message: "&#x26A1; Compilation failed" });
     } else if(state == "crashed") {
-        compileStateNode.innerHTML = "&#x1F480; Crashed on startup";
+        $.growl.error({ message: "&#x1F480; Crashed on startup" });
     }
 }
 
@@ -198,6 +229,7 @@ function save(action, title)
         'comment': title,
         'parent': snake_id
     };
+
     $.post('/snake/edit/save', JSON.stringify(json_req), function(data) {
         snake_id = data.snake_id;
         snake_title = data.comment;
@@ -205,13 +237,16 @@ function save(action, title)
         let logline = 'saved code as version #' + data.version;
         if (data.comment) { logline += "(\"" + data.comment + "\")"; }
         addLogLine(null, logline);
+        editor.session.getUndoManager().markClean();
 
-        editor.session.getUndoManager().markClean()
+        if (action == 'run') {
+
+            $("#build_log_content").text(logline + ", waiting for build output");
+            show_build_output();
+            pollCompileState();
+        }
+
     });
-
-    if(action == 'run') {
-        updateCompileState('not_compiled');
-    }
 }
 
 function showLoadDialog(data)
@@ -267,6 +302,11 @@ function addLogLine(frame, msg)
     if (auto_scroll)
     {
         logWindow.scrollTop = logWindow.scrollHeight - logWindow.clientHeight;
+    }
+
+    if (addLogLine_switches_tab)
+    {
+        show_log_output();
     }
 }
 

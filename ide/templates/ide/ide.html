@@ -18,8 +18,6 @@
 <div id="ide" class="fullwindow">
   <div id="editor"></div>
   <div id="preview"></div>
-  <div id="log"></div>
-  <div id="compile_state">Loading...</div>
   <div id="tools">
     <div id="toolbar">
       <button id="bt_run" title="Ctrl+R">run</button>
@@ -30,6 +28,16 @@
       <button id="bt_load" title="Ctrl+O">load</button>
       <button>preferences</button>
     </div>
+  </div>
+  <div id="logviews">
+    <div id="build_log">
+      <pre id="build_log_content"></pre>
+    </div>
+    <div id="log"></div>
+  </div>
+  <div id="logtabs">
+    <button id="show_build_output">build output</button>
+    <button id="show_log_output">log output</button>
   </div>
 </div>
 
