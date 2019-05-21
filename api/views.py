@@ -40,12 +40,18 @@ def version_dict(v):
     }
 
 
+def decode_build_log(build_log):
+    try:
+        return json.loads(build_log)
+    except json.JSONDecodeError:
+        return  [{'o': build_log}]
+    except TypeError:
+        return []
+
 def full_version_dict(v):
     d = version_dict(v)
     d['code'] = v.code
-    d['build_log'] = v.build_log
-    return d
-
+    d['build_log'] = decode_build_log(v.build_log)
 
 @require_http_methods(['GET', 'POST', 'PUT'])
 @bot_api
@@ -69,7 +75,10 @@ def get_compile_state(request):
     profile = get_user_profile(request.user)
     snake = profile.active_snake
     if snake:
-        return JsonResponse({'compile_state': str(snake.compile_state), 'build_log': snake.build_log})
+        return JsonResponse({
+            'compile_state': str(snake.compile_state),
+            'build_log': decode_build_log(snake.build_log)
+        })
     else:
         return JsonResponse({})
 

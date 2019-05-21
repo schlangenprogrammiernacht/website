@@ -25,8 +25,18 @@
 
 #sidebar {
     grid-area: sidebar;
+    padding-left:4px;
     background-color: #000000A0;
     overflow:hidden;
+}
+
+#sidebartabs {
+    grid-area: sidebartabs;
+    overflow:hidden;
+}
+
+#preview {
+    height:100%;
 }
 
 #logtabs {
@@ -34,15 +44,9 @@
     overflow:hidden;
 }
 
-#compile_state {
-    grid-area: compile_state;
-    font-size:18px;
-    background-color: #00000080;
-    padding: 5px;
-}
-
 #logviews {
     grid-area: logviews;
+    padding-top:4px;
 }
 
 #logviews>div {
@@ -53,12 +57,9 @@
     height: 100%;
 }
 
-#log div {
-}
-
 #log div div {
     display:inline-block;
-    width:120px;
+    width:140px;
     text-align:right;
 }
 
@@ -67,19 +68,18 @@
     padding-left:10px;
 }
 
-#tools
-{
-    grid-area: tools;
-    background-color: #00000080;
+#build_log .err {
+    color:red;
 }
 
-#toolbar
-{
+#tools {
+    grid-area: tools;
 }
 
 button {
-    background-color:#321700;
-    border:2px solid #613600;
+    background-color:#613600;
+    border:none;
+    border-radius:1em;
     margin:5px 5px;
     padding:3px 10px;
     font-size:14pt;

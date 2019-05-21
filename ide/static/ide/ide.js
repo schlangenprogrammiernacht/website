@@ -164,7 +164,15 @@ function updateCompileState(data)
     else
     {
         addLogLine_switches_tab = false;
-        $("#build_log_content").text(build_log);
+        let c = $("#build_log").empty();
+        data.build_log.forEach(function(item) {
+            if (item.e) {
+                c.append($('<div/>').addClass('err').text(item.e));
+            }
+            if (item.o) {
+                c.append($('<div/>').addClass('std').text(item.o));
+            }
+        });
         logTabs.select(0);
     }
 
