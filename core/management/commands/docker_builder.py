@@ -85,8 +85,3 @@ class Command(BaseCommand):
 
     def cleanup_username(self, username):
         return self.cleanup_re.sub("_", username)
-
-    @staticmethod
-    def format_build_log(stdout, stderr):
-        return  "--------- STDOUT ---------\n{0}\n\n--------- STDERR ---------\n{1}\n".format(stdout, stderr)
-
