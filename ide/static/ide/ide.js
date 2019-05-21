@@ -154,7 +154,6 @@ function pollCompileState()
 function updateCompileState(data)
 {
     let state = data.compile_state;
-    let build_log = data.build_log;
 
     if (state == "not_compiled")
     {
@@ -166,6 +165,9 @@ function updateCompileState(data)
         addLogLine_switches_tab = false;
         let c = $("#build_log").empty();
         data.build_log.forEach(function(item) {
+            if (item.i) {
+                c.append($('<div/>').addClass('info').text(item.i));
+            }
             if (item.e) {
                 c.append($('<div/>').addClass('err').text(item.e));
             }
@@ -176,13 +178,12 @@ function updateCompileState(data)
         logTabs.select(0);
     }
 
-    if (state == "successful")
-    {
+    if (state == "successful") {
         window.setTimeout(function() { addLogLine_switches_tab = true; }, 5000);
         $.growl.notice({ message: "&#x2714; Compilation successful" });
-    } else if(state == "failed") {
+    } else if (state == "failed") {
         $.growl.error({ message: "&#x26A1; Compilation failed" });
-    } else if(state == "crashed") {
+    } else if (state == "crashed") {
         $.growl.error({ message: "&#x1F480; Crashed on startup" });
     }
 }
@@ -236,9 +237,10 @@ function save(action, title)
         editor.session.getUndoManager().markClean();
 
         if (action == 'run') {
-
-            $("#build_log_content").text(logline + ", waiting for build output");
+            addLogLine_switches_tab = false;
             logTabs.select(0);
+            let info = $('<div/>').addClass('info').text(logline + ", waiting for build output");
+            $("#build_log").empty().append(info);
             pollCompileState();
         }
 

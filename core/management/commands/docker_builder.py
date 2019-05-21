@@ -31,6 +31,7 @@ class Command(BaseCommand):
 
     def build_version(self, snake_version):
         return_code, output = self.run_build_script(snake_version)
+        output.insert(0, {'i': 'compiling version ' + str(snake_version.version)})
         snake_version.build_log = json.dumps(output)
         snake_version.compile_state = 'successful' if return_code == 0 else 'failed'
         snake_version.save()

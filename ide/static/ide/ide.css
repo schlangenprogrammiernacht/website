@@ -72,6 +72,11 @@
     color:red;
 }
 
+#build_log .info {
+    color:yellow;
+    font-style:italic;
+}
+
 #tools {
     grid-area: tools;
 }
