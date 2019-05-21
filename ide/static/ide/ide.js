@@ -2,10 +2,19 @@ let logWindow = null;
 let game = null;
 let editor = null;
 let addLogLine_switches_tab = false;
+let logTabs = null;
+let sidebarTabs = null;
 
 $(function() {
     logWindow = document.getElementById('log');
-    setupTabs();
+    logTabs = new TabBar($('#logtabs'), $('#logviews'));
+    logTabs.init();
+    $('#show_build_output').click(function() { addLogLine_switches_tab = false; })
+
+    sidebarTabs = new TabBar($('#sidebartabs'), $('#sidebar'));
+    sidebarTabs.init();
+    sidebarTabs.select(0);
+
     setupEditor();
     setupPreview();
     setupToolbar();
@@ -25,27 +34,6 @@ $(function() {
 $(window).resize(function() {
     game.vis.Resize();
 });
-
-function show_build_output()
-{
-    $('#log').hide();
-    $('#build_log').show();
-    addLogLine_switches_tab = false;
-}
-
-function show_log_output()
-{
-    $('#build_log').hide();
-    $('#log').show();
-    addLogLine_switches_tab = true;
-}
-
-function setupTabs()
-{
-    $('#show_build_output').click(show_build_output);
-    $('#show_log_output').click(show_log_output);
-    show_build_output();
-}
 
 function setupEditor()
 {
@@ -177,7 +165,7 @@ function updateCompileState(data)
     {
         addLogLine_switches_tab = false;
         $("#build_log_content").text(build_log);
-        show_build_output();
+        logTabs.select(0);
     }
 
     if (state == "successful")
@@ -242,7 +230,7 @@ function save(action, title)
         if (action == 'run') {
 
             $("#build_log_content").text(logline + ", waiting for build output");
-            show_build_output();
+            logTabs.select(0);
             pollCompileState();
         }
 
@@ -306,7 +294,7 @@ function addLogLine(frame, msg)
 
     if (addLogLine_switches_tab)
     {
-        show_log_output();
+        logTabs.select(1);
     }
 }
 

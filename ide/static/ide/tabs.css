@@ -1,0 +1,21 @@
+.tab_bar button {
+    background-color: #321700;
+    border: 2px solid #613600;
+    margin: 0;
+    padding: 3px 10px;
+    font-size: 14pt;
+    color: white;
+    border-radius: 0 0 0.6em 0.6em;
+}
+
+.tab_bar button.active {
+    background-color: #613600;
+}
+
+.tab_view > div {
+    display:none;
+}
+
+.tab_view > div.active {
+    display:block;
+}

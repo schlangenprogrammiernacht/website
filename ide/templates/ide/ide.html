@@ -7,6 +7,7 @@
 
 {% block css %}
   <link rel="stylesheet" type="text/css" href="{% static "ide/ide.css" %}" />
+  <link rel="stylesheet" type="text/css" href="{% static "ide/tabs.css" %}" />
 {% endblock %}
 
 {% block content %}
@@ -17,7 +18,10 @@
 
 <div id="ide" class="fullwindow">
   <div id="editor"></div>
-  <div id="preview"></div>
+  <div id="sidebar" class="tab_view">
+    <div id="preview"></div>
+    <div>Memory View</div>
+  </div>
   <div id="tools">
     <div id="toolbar">
       <button id="bt_run" title="Ctrl+R">run</button>
@@ -29,15 +33,19 @@
       <button>preferences</button>
     </div>
   </div>
-  <div id="logviews">
+  <div id="logviews" class="tab_view">
     <div id="build_log">
       <pre id="build_log_content"></pre>
     </div>
     <div id="log"></div>
   </div>
-  <div id="logtabs">
+  <div id="logtabs" class="tab_bar">
     <button id="show_build_output">build output</button>
     <button id="show_log_output">log output</button>
+  </div>
+  <div id="sidebartabs" class="tab_bar">
+    <button>Live View</button>
+    <button>Memory</button>
   </div>
 </div>
 
@@ -79,6 +87,7 @@
   let csrftoken = $("[name=csrfmiddlewaretoken]").val();
 </script>
 <script src="{% static "ide/ace/src-noconflict/ace.js" %}" type="text/javascript" charset="utf-8"></script>
+<script src="{% static "ide/tabs.js" %}" type="text/javascript" charset="utf-8"></script>
 <script src="{% static "ide/ide.js" %}" type="text/javascript" charset="utf-8"></script>
 {% include "visualization/js.html" %}
 {% endblock %}
