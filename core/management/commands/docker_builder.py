@@ -63,6 +63,7 @@ class Command(BaseCommand):
             stderr = p.stderr.fileno()
             for fd, s in Command.read_fds([stdout, stderr], 1024):
                 data.append({ 'e' if fd==stderr else 'o': s.decode() })
+            p.wait()
             return p.returncode, data
 
     @staticmethod
