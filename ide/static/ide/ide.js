@@ -16,7 +16,8 @@ $(function() {
     sidebarTabs.select(0);
 
     setupEditor();
-    setupPreview();
+    window.setTimeout(setupPreview, 100);
+    //setupPreview();
     setupToolbar();
     setupShortcuts();
 
