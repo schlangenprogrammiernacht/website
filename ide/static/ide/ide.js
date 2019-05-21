@@ -231,9 +231,12 @@ function save(action, title)
         snake_id = data.snake_id;
         snake_title = data.comment;
         game.vis.FollowName(snake_follow_name, true);
+
         let logline = 'saved code as version #' + data.version;
         if (data.comment) { logline += "(\"" + data.comment + "\")"; }
-        addLogLine(null, logline);
+
+        $.growl.notice({ message: logline });
+
         editor.session.getUndoManager().markClean();
 
         if (action == 'run') {
