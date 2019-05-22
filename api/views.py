@@ -72,7 +72,7 @@ def get_compile_state(request):
         return JsonResponse({})
 
 
-@require_http_methods(['GET','POST','PUT'])
+@require_http_methods(['GET','POST','PUT','DELETE'])
 @bot_api
 def persistent_data(request):
     profile = get_user_profile(request.user)
@@ -80,6 +80,9 @@ def persistent_data(request):
         if len(request.body) > settings.PERSISTENT_MEMORY_SIZE:
             return HttpResponseBadRequest('max size for persistent memory blob is {0} bytes.'.format(settings.PERSISTENT_MEMORY_SIZE))
         profile.persistent_data = request.body
+        profile.save()
+    elif request.method == 'DELETE':
+        profile.persistent_data = bytearray([0]*settings.PERSISTENT_MEMORY_SIZE)
         profile.save()
     resp = HttpResponse(profile.persistent_data, content_type='application/octet-stream')
     resp['Content-Disposition'] = 'attachment; filename=persistent_data.dat'
