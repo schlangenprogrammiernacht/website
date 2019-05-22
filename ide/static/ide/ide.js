@@ -18,6 +18,16 @@ $(function() {
     $('#refresh_persistent_memory').click(updatePersistentMemory);
     $('#persistent_data_upload').click(function() { $('#persistent_data_file').click()});
     $('#persistent_data_file').on('change', uploadPersistentData);
+    $('#persistent_data_clear').click(function() {
+       if (confirm("really delete the persistent data?"))
+       {
+           $.ajax({
+              url: '/api/v1/profile/persistent_data',
+              type: 'DELETE',
+              success: updatePersistentMemory
+           });
+       }
+    });
 
     setupEditor();
     setupToolbar();
@@ -26,9 +36,6 @@ $(function() {
 
     $.ajaxSetup({
         beforeSend: function(xhr, settings) {
-            if (settings.dataType === 'binary') {
-                settings.xhr().responseType = 'arraybuffer';
-            }
             if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
                 xhr.setRequestHeader("X-CSRFToken", csrftoken);
             }
@@ -324,23 +331,12 @@ function addLogLine(frame, msg)
 function updatePersistentMemory()
 {
     $('#hexdump').text('');
-/*    $.ajax({
-        url: '/api/v1/profile/persistent_data',
-        dataType: 'binary',
-        processData: false,
-        success: function(resp) {
-            $('#hexdump').text(hexy(resp));
-        },
-        error: console.log
-    }); */
     var req = new XMLHttpRequest();
     req.open('GET', '/api/v1/profile/persistent_data', true);
     req.responseType = "arraybuffer";
     req.onload = function(oEvent) {
         let byteArray = new Uint8Array(req.response)
         $('#hexdump').text(hexy(byteArray));
-        //var arrayBuffer = req.response;
-        //var byteArray = new Uint8Array(arrayBuffer);
     };
     req.send();
 }
