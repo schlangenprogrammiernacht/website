@@ -92,7 +92,9 @@ def persistent_data(request):
             return HttpResponseBadRequest('max size for persistent memory blob is {0} bytes.'.format(settings.PERSISTENT_MEMORY_SIZE))
         profile.persistent_data = request.body
         profile.save()
-    return HttpResponse(profile.persistent_data, content_type='application/octet-stream')
+    resp = HttpResponse(profile.persistent_data, content_type='application/octet-stream')
+    resp['Content-Disposition'] = 'attachment; filename=persistent_data.dat'
+    return resp
 
 
 @require_http_methods(['POST', 'PUT'])
