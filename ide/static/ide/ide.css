@@ -81,7 +81,7 @@
     grid-area: tools;
 }
 
-button {
+button, .button {
     background-color:#613600;
     border:none;
     border-radius:1em;
@@ -89,6 +89,11 @@ button {
     padding:3px 10px;
     font-size:14pt;
     color:white;
+    text-decoration: none;
+}
+
+.button:hover {
+    text-decoration: none;
 }
 
 #hexdump {

@@ -20,7 +20,15 @@
   <div id="editor"></div>
   <div id="sidebar" class="tab_view">
     <div id="preview"></div>
-    <div id="persistent_memory"><pre id="hexdump"></pre></div>
+    <div id="persistent_memory">
+      <div>
+        <button id="refresh_persistent_memory">Refresh</button>
+        <a class="button" href="/api/v1/profile/persistent_data">Download</a>
+        <input id="persistent_data_file" type="file" style="display:none">
+        <button id="persistent_data_upload">Upload</button>
+      </div>
+      <pre id="hexdump"></pre>
+    </div>
   </div>
   <div id="tools">
     <div id="toolbar">

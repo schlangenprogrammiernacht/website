@@ -15,6 +15,9 @@ $(function() {
     sidebarTabs.init();
     sidebarTabs.select(0);
     $('#persistent_memory').on('select', updatePersistentMemory);
+    $('#refresh_persistent_memory').click(updatePersistentMemory);
+    $('#persistent_data_upload').click(function() { $('#persistent_data_file').click()});
+    $('#persistent_data_file').on('change', uploadPersistentData);
 
     setupEditor();
     setupToolbar();
@@ -23,6 +26,9 @@ $(function() {
 
     $.ajaxSetup({
         beforeSend: function(xhr, settings) {
+            if (settings.dataType === 'binary') {
+                settings.xhr().responseType = 'arraybuffer';
+            }
             if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
                 xhr.setRequestHeader("X-CSRFToken", csrftoken);
             }
@@ -165,17 +171,20 @@ function updateCompileState(data)
     {
         addLogLine_switches_tab = false;
         let c = $("#build_log").empty();
-        data.build_log.forEach(function(item) {
-            if (item.i) {
-                c.append($('<div/>').addClass('info').text(item.i));
-            }
-            if (item.e) {
-                c.append($('<div/>').addClass('err').text(item.e));
-            }
-            if (item.o) {
-                c.append($('<div/>').addClass('std').text(item.o));
-            }
-        });
+        if (data.build_log)
+        {
+            data.build_log.forEach(function(item) {
+                if (item.i) {
+                    c.append($('<div/>').addClass('info').text(item.i));
+                }
+                if (item.e) {
+                    c.append($('<div/>').addClass('err').text(item.e));
+                }
+                if (item.o) {
+                    c.append($('<div/>').addClass('std').text(item.o));
+                }
+            });
+        }
         logTabs.select(0);
     }
 
@@ -314,8 +323,38 @@ function addLogLine(frame, msg)
 
 function updatePersistentMemory()
 {
-    $.get('/api/v1/profile/persistent_data', function(resp) {
-        $('#hexdump').text(hexy(resp));
+    $('#hexdump').text('');
+/*    $.ajax({
+        url: '/api/v1/profile/persistent_data',
+        dataType: 'binary',
+        processData: false,
+        success: function(resp) {
+            $('#hexdump').text(hexy(resp));
+        },
+        error: console.log
+    }); */
+    var req = new XMLHttpRequest();
+    req.open('GET', '/api/v1/profile/persistent_data', true);
+    req.responseType = "arraybuffer";
+    req.onload = function(oEvent) {
+        let byteArray = new Uint8Array(req.response)
+        $('#hexdump').text(hexy(byteArray));
+        //var arrayBuffer = req.response;
+        //var byteArray = new Uint8Array(arrayBuffer);
+    };
+    req.send();
+}
+
+function uploadPersistentData(e)
+{
+    let file = e.target.files[0];
+    $.ajax({
+        type: 'POST',
+        url: '/api/v1/profile/persistent_data',
+        data: file,
+        processData: false,
+        contentType: false,
+        success: updatePersistentMemory
     });
 }
 
