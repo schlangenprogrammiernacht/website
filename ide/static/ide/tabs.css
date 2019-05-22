@@ -14,6 +14,7 @@
 
 .tab_view > div {
     display:none;
+    height:100%;
 }
 
 .tab_view > div.active {
