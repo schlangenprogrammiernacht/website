@@ -1,6 +1,6 @@
 "use strict";
 
-function GameVisualization(assets, snakeMoveStrategy, container)
+function GameVisualization(assets, snakeMoveStrategy, container, readyfunc)
 {
     this.container = container;
     this.snakeMoveStrategy = snakeMoveStrategy;
@@ -14,10 +14,6 @@ function GameVisualization(assets, snakeMoveStrategy, container)
     this.foodItems = {};
 
     this.app = new PIXI.Application({'transparent':false});
-    this.txHead = PIXI.Texture.from(assets['head.png']);
-    this.txBody = PIXI.Texture.from(assets['body.png']);
-    this.txFood = PIXI.Texture.from(assets['food.png']);
-
     this.viewport = new PIXI.extras.Viewport({
         screenWidth: this.container.clientWidth,
         screenHeight: this.container.clientHeight,
@@ -36,13 +32,20 @@ function GameVisualization(assets, snakeMoveStrategy, container)
     this.snakesContainer.mask = this.snakesMask;
     this.UpdateMask();
 
-    this.segmentPool = new ObjectPool(function() {
-        return new SnakeSegment(this.txBody);
-    }, this, 10000);
-
-    this.foodItemPool = new ObjectPool(function() {
-        return new FoodSprite(this.txFood);
-    }, this, 10000);
+    let self = this;
+    this.assets = assets;
+    PIXI.loader.add([assets['head.png'], assets['body.png'], assets['food.png']]).load(function() {
+        self.txHead = PIXI.loader.resources[self.assets['head.png']].texture;
+        self.txBody = PIXI.loader.resources[self.assets['body.png']].texture;
+        self.txFood = PIXI.loader.resources[self.assets['food.png']].texture;
+        self.segmentPool = new ObjectPool(function() {
+            return new SnakeSegment(self.txBody);
+        }, self, 10000);
+        self.foodItemPool = new ObjectPool(function() {
+            return new FoodSprite(self.txFood);
+        }, self, 10000);
+        readyfunc();
+    });
 }
 
 GameVisualization.prototype.UpdateMask = function()

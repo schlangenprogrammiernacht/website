@@ -32,7 +32,7 @@ $(function() {
     setupEditor();
     setupToolbar();
     setupShortcuts();
-    window.setTimeout(setupPreview, 500);
+    setupPreview();
 
     $.ajaxSetup({
         beforeSend: function(xhr, settings) {
@@ -69,11 +69,12 @@ function setupEditor()
 
 function setupPreview()
 {
-    game = new Game(assets, strategy, document.getElementById('preview'));
-    game.SetViewerKey(viewer_key);
-    game.AddLogHandler(addLogLine);
-    game.Run();
-    game.vis.FollowName(snake_follow_name, true);
+    game = new Game(assets, strategy, document.getElementById('preview'), function() {
+        game.SetViewerKey(viewer_key);
+        game.AddLogHandler(addLogLine);
+        game.Run();
+        game.vis.FollowName(snake_follow_name, true);
+    });
 }
 
 function setupToolbar()
