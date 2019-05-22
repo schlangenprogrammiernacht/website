@@ -112,4 +112,6 @@ HIGHSCORE_DT_TILL = None #datetime.datetime(9999, 12, 31, 23, 59, tzinfo=pytz.UT
 HIGHSCORE_DT_RANGE = datetime.timedelta(hours=24)
 HIGHSCORE_BLACKLIST = []
 
+PERSISTENT_MEMORY_SIZE = 4096
+
 exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "local_settings.py")).read()) in globals()
