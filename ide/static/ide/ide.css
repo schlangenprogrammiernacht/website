@@ -91,6 +91,12 @@ button {
     color:white;
 }
 
+#hexdump {
+    font-size:11pt;
+    height:100%;
+    overflow:scroll;
+}
+
 #editor .ace_gutter {
     background-color: #FFFFFF20;
 }

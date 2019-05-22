@@ -9,17 +9,17 @@ $(function() {
     logWindow = document.getElementById('log');
     logTabs = new TabBar($('#logtabs'), $('#logviews'));
     logTabs.init();
-    $('#show_build_output').click(function() { addLogLine_switches_tab = false; })
+    $('#show_build_output').click(function() { addLogLine_switches_tab = false; });
 
     sidebarTabs = new TabBar($('#sidebartabs'), $('#sidebar'));
     sidebarTabs.init();
     sidebarTabs.select(0);
+    $('#persistent_memory').on('select', updatePersistentMemory);
 
     setupEditor();
-    window.setTimeout(setupPreview, 100);
-    //setupPreview();
     setupToolbar();
     setupShortcuts();
+    window.setTimeout(setupPreview, 500);
 
     $.ajaxSetup({
         beforeSend: function(xhr, settings) {
@@ -310,6 +310,13 @@ function addLogLine(frame, msg)
     {
         logTabs.select(1);
     }
+}
+
+function updatePersistentMemory()
+{
+    $.get('/api/v1/profile/persistent_data', function(resp) {
+        $('#hexdump').text(hexy(resp));
+    });
 }
 
 window.onbeforeunload = function (e) {
