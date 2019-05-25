@@ -1,9 +1,9 @@
 import json
-from django.http import JsonResponse, HttpResponseBadRequest
+from django.conf import settings
+from django.http import JsonResponse, HttpResponseBadRequest, HttpResponse
 from django.forms import ModelForm
 from django.core.exceptions import PermissionDenied, SuspiciousOperation
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.models import AnonymousUser
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
 from core.models import ApiKey, SnakeVersion, ServerCommand, get_user_profile, LiveStats
@@ -70,6 +70,23 @@ def get_compile_state(request):
         return JsonResponse({'compile_state': str(snake.compile_state)})
     else:
         return JsonResponse({})
+
+
+@require_http_methods(['GET','POST','PUT','DELETE'])
+@bot_api
+def persistent_data(request):
+    profile = get_user_profile(request.user)
+    if request.method in ['POST', 'PUT']:
+        if len(request.body) > settings.PERSISTENT_MEMORY_SIZE:
+            return HttpResponseBadRequest('max size for persistent memory blob is {0} bytes.'.format(settings.PERSISTENT_MEMORY_SIZE))
+        profile.persistent_data = request.body
+        profile.save()
+    elif request.method == 'DELETE':
+        profile.persistent_data = bytearray([0]*settings.PERSISTENT_MEMORY_SIZE)
+        profile.save()
+    resp = HttpResponse(profile.persistent_data, content_type='application/octet-stream')
+    resp['Content-Disposition'] = 'attachment; filename=persistent_data.dat'
+    return resp
 
 
 @require_http_methods(['POST', 'PUT'])
