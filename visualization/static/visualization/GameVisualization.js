@@ -261,7 +261,7 @@ GameVisualization.prototype.FollowName = function(name, changeZoomLevel)
             this.viewport.follow(snake.GetHeadSprite(), { radius: 0 });
             if (changeZoomLevel)
             {
-                let scale = 1.5/snake.spriteScale;
+                let scale = 0.25/snake.spriteScale;
                 this.viewport.scale.x = scale;
                 this.viewport.scale.y = scale;
             }
