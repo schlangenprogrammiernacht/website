@@ -32,7 +32,6 @@
       <li><a href="{% url 'watch' %}">Watch</a></li>
       {% if user.is_authenticated %}
         <li><a href="{% url 'snake_edit_latest' %}">Code</a></li>
-        <li><a href="{% url 'buildlogs' %}">Build Log</a></li>
       {% endif %}
       <li><a href="{% url 'docs' %}">API</a></li>
       <li><a href="{% url 'highscore' %}">Highscores</a></li>
@@ -60,6 +59,8 @@
       (c) 2018-2019 <a href="https://www.bytewerk.org/">bytewerk.org</a>
     </div>
 {% endblock %}
+
+    <img id="background_2" src="{% static "core/gpn19_fg_sm.png" %}">
 
     <script src="{% static "core/jquery-3.3.1.min.js" %}"></script>
     <script src="{% static "core/checkbox.min.js" %}"></script>

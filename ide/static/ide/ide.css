@@ -82,13 +82,13 @@
 }
 
 button, .button {
-    background-color:#613600;
-    border:none;
+    color:white;
+    border: none;
+    background-color: #b28e27;
     border-radius:1em;
     margin:5px 5px;
     padding:3px 10px;
     font-size:14pt;
-    color:white;
     text-decoration: none;
 }
 

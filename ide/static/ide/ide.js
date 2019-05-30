@@ -17,6 +17,7 @@ $(function() {
     $('#persistent_memory').on('select', updatePersistentMemory);
     $('#refresh_persistent_memory').click(updatePersistentMemory);
     $('#persistent_data_upload').click(function() { $('#persistent_data_file').click()});
+    $('#persistent_data_download').click(function() {  window.location='/api/v1/profile/persistent_data'; });
     $('#persistent_data_file').on('change', uploadPersistentData);
     $('#persistent_data_clear').click(function() {
        if (confirm("really delete the persistent data?"))
