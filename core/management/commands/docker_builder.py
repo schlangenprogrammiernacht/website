@@ -2,8 +2,10 @@ import re
 import os
 import time
 import subprocess
+import select
 import tempfile
 import datetime
+import json
 from django.core.management.base import BaseCommand
 from core.models import SnakeVersion
 
@@ -28,8 +30,9 @@ class Command(BaseCommand):
                 time.sleep(5)
 
     def build_version(self, snake_version):
-        return_code, stdout, stderr = self.run_build_script(snake_version)
-        snake_version.build_log = self.format_build_log(stdout, stderr)
+        return_code, output = self.run_build_script(snake_version)
+        output.insert(0, {'i': 'compiling version ' + str(snake_version.version)})
+        snake_version.build_log = json.dumps(output)
         snake_version.compile_state = 'successful' if return_code == 0 else 'failed'
         snake_version.save()
 
@@ -44,13 +47,37 @@ class Command(BaseCommand):
             clean_name = self.cleanup_username(snake_version.user.username)
             cmd = [BUILD_SCRIPT, str(snake_version.id), clean_name, code_file]
             print(f"{now()}: Running: {cmd}")
-            sp = subprocess.run(cmd, cwd=BUILD_CWD, capture_output=True)
-            print(f"{now()}: subprocess completed: {sp.returncode}")
+            return_code, data = self.get_output_json(cmd, cwd=BUILD_CWD)
+            print(f"{now()}: subprocess completed: {return_code}")
+            return return_code, data
 
-            return sp.returncode, sp.stdout.decode('utf-8'), sp.stderr.decode('utf-8')
         finally:
             os.unlink(code_file)
             print(f"{now()}: {code_file} deleted.")
+
+    @staticmethod
+    def get_output_json(cmd, cwd):
+        data = []
+        with subprocess.Popen(cmd, cwd=cwd, stdout=subprocess.PIPE, stderr=subprocess.PIPE) as p:
+            stdout = p.stdout.fileno()
+            stderr = p.stderr.fileno()
+            for fd, s in Command.read_fds([stdout, stderr], 1024):
+                data.append({ 'e' if fd==stderr else 'o': s.decode() })
+            p.wait()
+            return p.returncode, data
+
+    @staticmethod
+    def read_fds(fds, maxread):
+        while True:
+            fds_in, _, _ = select.select(fds, [], [])
+            for fd in fds_in:
+                s = os.read(fd, maxread)
+                if len(s) == 0:
+                    fds.remove(fd)
+                    continue
+                yield fd, s
+            if not len(fds):
+                break
 
     @staticmethod
     def write_code_to_temp_file(snake_version):
@@ -60,8 +87,3 @@ class Command(BaseCommand):
 
     def cleanup_username(self, username):
         return self.cleanup_re.sub("_", username)
-
-    @staticmethod
-    def format_build_log(stdout, stderr):
-        return  "--------- STDOUT ---------\n{0}\n\n--------- STDERR ---------\n{1}\n".format(stdout, stderr)
-

@@ -5,8 +5,8 @@ html {
 }
 
 body {
-    background-color:#321700;
-    color:white;
+    background-color:#000000;
+    color:#DDD;
     font-family: Verdana, "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;
     font-size:16pt;
     margin:0;
@@ -14,17 +14,30 @@ body {
     height: 100%;
     max-height: 100%;
     width: 100%;
-    background-image: url("/static/core/brain.png");
+    background-image: url("/static/core/gpn19_bg.svg");
     background-repeat: no-repeat;
-    background-position: top 50px right -60px;
+    background-position: center;
+    background-size:cover;
+}
+
+#background_2 {
+    position:fixed;
+    right:-100px;
+    bottom:-100px;
+    z-index:-1;
+    overflow:hidden;
+}
+
+h1,h2 {
+    color: #fac737;
 }
 
 a {
-    color: beige;
+    color: white;
 }
 
 ul.nav {
-    background-color:#613600;
+    background-color:#333130;
     text-align: center;
     padding: 4px 0;
     margin:0;
@@ -46,15 +59,15 @@ ul.nav li a, .footer a {
 }
 
 ul.nav li:hover {
-    background-color: #804600;
+    background-color: #b28e27;
 }
 
 ul.sub.nav {
-    background-color: #492903;
+    background-color: #333130;
     left: 50%;
     margin-top: 6px;
     position: relative;
-    width: 500px;
+    width: 75%;
     transform: translateX(-50%);
 }
 
@@ -72,18 +85,18 @@ div.content {
     padding:10px;
 }
 
-div.content > h2,
 div.content > div.panel {
     margin-left: 200px;
 }
 
 div.footer {
+    color:white;
     text-align:center;
     position:fixed;
     bottom:0;
     width:100%;
     padding:3px;
-    background-color:#613600;
+    background-color:#333130;
 }
 
 #snake

@@ -1,6 +1,13 @@
 {% extends 'core/base.html' %}
 {% load static %}
 
+{% block css %}
+  <style>
+    #background_2 { display:none; }
+    #snake { display:none; }
+  </style>
+{% endblock %}
+
 {% block content %}
   <div id="stage" class="fullwindow" style="background-color:#00000080">
     <div id="followmsg">
@@ -28,11 +35,9 @@
   {% include "visualization/js.html" %}
 
   <script>
-    let game = new Game(assets, strategy, document.getElementById('stage'));
-    window.onload = function()
-    {
+    let game = new Game(assets, strategy, document.getElementById('stage'), function() {
         game.Run();
-    };
+    });
 
     window.onresize = function()
     {

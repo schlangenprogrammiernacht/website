@@ -1,13 +1,13 @@
 "use strict";
 
-function Game(assets, snakeMoveStrategy, container)
+function Game(assets, snakeMoveStrategy, container, readyfunc)
 {
     this.ws = null;
     this.heading = 0;
     this.speed = 2;
     this.viewer_key = 0;
     this.snakeMoveStrategy = snakeMoveStrategy;
-    this.vis = new GameVisualization(assets, snakeMoveStrategy, container);
+    this.vis = new GameVisualization(assets, snakeMoveStrategy, container, readyfunc);
     this.logHandlers = [];
     this.gameEventHandlers = [];
     this.gameInfoReceived = false;

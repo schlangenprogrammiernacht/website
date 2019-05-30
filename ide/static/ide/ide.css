@@ -1,19 +1,20 @@
 #snake {
-    width:120px;
+    display:none;
 }
 
 #ide {
     display:grid;
 
     grid-template-columns: 2fr 1fr;
-    grid-template-rows: 4fr 1fr;
+    grid-template-rows: 0fr 4fr 1fr;
     grid-template-areas:
-        "editor preview"
-        "log preview"
-        "log compile_state"
-        "log tools";
-    grid-column-gap: 5px;
-    grid-row-gap: 5px;
+        "tools sidebar"
+        "editor sidebar"
+        "logviews sidebar"
+        "logviews sidebar"
+        "logtabs sidebartabs";
+    grid-column-gap: 0px;
+    grid-row-gap: 0px;
 }
 
 #editor {
@@ -22,33 +23,43 @@
     background-color: #00000080;
 }
 
-#preview {
-    grid-area: preview;
+#sidebar {
+    grid-area: sidebar;
+    padding-left:4px;
     background-color: #000000A0;
     overflow:hidden;
 }
 
-#compile_state {
-    grid-area: compile_state;
-    font-size:18px;
-    background-color: #00000080;
-    padding: 5px;
+#sidebartabs {
+    grid-area: sidebartabs;
+    overflow:hidden;
 }
 
-#log {
-    grid-area: log;
+#preview {
+    height:100%;
+}
+
+#logtabs {
+    grid-area: logtabs;
+    overflow:hidden;
+}
+
+#logviews {
+    grid-area: logviews;
+    padding-top:4px;
+}
+
+#logviews>div {
     background-color: #00000080;
     font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
     font-size: 11pt;
     overflow: scroll;
-}
-
-#log div {
+    height: 100%;
 }
 
 #log div div {
     display:inline-block;
-    width:120px;
+    width:140px;
     text-align:right;
 }
 
@@ -57,23 +68,38 @@
     padding-left:10px;
 }
 
-#tools
-{
+#build_log .err {
+    color:red;
+}
+
+#build_log .info {
+    color:yellow;
+    font-style:italic;
+}
+
+#tools {
     grid-area: tools;
-    background-color: #00000080;
 }
 
-#toolbar
-{
-}
-
-button {
-    background-color:#321700;
-    border:2px solid #613600;
+button, .button {
+    color:white;
+    border: none;
+    background-color: #b28e27;
+    border-radius:1em;
     margin:5px 5px;
     padding:3px 10px;
     font-size:14pt;
-    color:white;
+    text-decoration: none;
+}
+
+.button:hover {
+    text-decoration: none;
+}
+
+#hexdump {
+    font-size:11pt;
+    height:100%;
+    overflow:scroll;
 }
 
 #editor .ace_gutter {

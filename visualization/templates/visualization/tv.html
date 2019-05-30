@@ -29,6 +29,9 @@
     }
 
     body { background:black; }
+    #background_2 { display:none; }
+    #snake { display:none; }
+
   </style>
 {% endblock %}
 
@@ -52,11 +55,10 @@
   {% include "visualization/js.html" %}
 
   <script>
-    let game = new Game(assets, strategy, document.getElementById('stage'));
-    window.onload = function()
-    {
+    let game = new Game(assets, strategy, document.getElementById('stage'), function() {
         game.Run();
-    };
+    });
+
     window.onresize = function()
     {
         game.vis.Resize();

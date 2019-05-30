@@ -1,14 +1,39 @@
 let logWindow = null;
 let game = null;
 let editor = null;
+let addLogLine_switches_tab = false;
+let logTabs = null;
+let sidebarTabs = null;
 
 $(function() {
     logWindow = document.getElementById('log');
+    logTabs = new TabBar($('#logtabs'), $('#logviews'));
+    logTabs.init();
+    $('#show_build_output').click(function() { addLogLine_switches_tab = false; });
+
+    sidebarTabs = new TabBar($('#sidebartabs'), $('#sidebar'));
+    sidebarTabs.init();
+    sidebarTabs.select(0);
+    $('#persistent_memory').on('select', updatePersistentMemory);
+    $('#refresh_persistent_memory').click(updatePersistentMemory);
+    $('#persistent_data_upload').click(function() { $('#persistent_data_file').click()});
+    $('#persistent_data_download').click(function() {  window.location='/api/v1/profile/persistent_data'; });
+    $('#persistent_data_file').on('change', uploadPersistentData);
+    $('#persistent_data_clear').click(function() {
+       if (confirm("really delete the persistent data?"))
+       {
+           $.ajax({
+              url: '/api/v1/profile/persistent_data',
+              type: 'DELETE',
+              success: updatePersistentMemory
+           });
+       }
+    });
+
     setupEditor();
-    setupPreview();
     setupToolbar();
     setupShortcuts();
-    setupCompileState();
+    setupPreview();
 
     $.ajaxSetup({
         beforeSend: function(xhr, settings) {
@@ -17,6 +42,8 @@ $(function() {
             }
         }
     });
+
+    pollCompileState();
 });
 
 $(window).resize(function() {
@@ -43,11 +70,12 @@ function setupEditor()
 
 function setupPreview()
 {
-    game = new Game(assets, strategy, document.getElementById('preview'));
-    game.SetViewerKey(viewer_key);
-    game.AddLogHandler(addLogLine);
-    game.Run();
-    game.vis.FollowName(snake_follow_name, true);
+    game = new Game(assets, strategy, document.getElementById('preview'), function() {
+        game.SetViewerKey(viewer_key);
+        game.AddLogHandler(addLogLine);
+        game.Run();
+        game.vis.FollowName(snake_follow_name, true);
+    });
 }
 
 function setupToolbar()
@@ -126,37 +154,56 @@ function setupShortcuts()
     });
 }
 
-function setupCompileState()
+function pollCompileState()
 {
-    window.setInterval(function() {
-        $.get("/api/v1/compile_state", function (data, status) {
-            if (status!='success') {
-                console.log('error while loading compile_state: ' + status);
-                return;
-            }
-
-            if(!data) {
-                // no active snake version
-                return;
-            }
-
-            updateCompileState(data.compile_state);
-        });
-    }, 5000);
+    $.ajax({
+        url: '/api/v1/compile_state',
+        dataType: 'json',
+        success: updateCompileState,
+        error: function()
+        {
+            window.setTimeout(pollCompileState, 10000);
+        }
+    });
 }
 
-function updateCompileState(state)
+function updateCompileState(data)
 {
-    let compileStateNode = document.getElementById('compile_state')
+    let state = data.compile_state;
 
-    if(state == "not_compiled") {
-        compileStateNode.innerHTML = "&#x1F527; Compiling...";
-    } else if(state == "successful") {
-        compileStateNode.innerHTML = "&#x2714; Compilation successful";
-    } else if(state == "failed") {
-        compileStateNode.innerHTML = '&#x26A1; Compilation failed (<a href="/snake/buildlogs">Build log</a>)';
-    } else if(state == "crashed") {
-        compileStateNode.innerHTML = "&#x1F480; Crashed on startup";
+    if (state == "not_compiled")
+    {
+        window.setTimeout(pollCompileState, 1000);
+        return;
+    }
+    else
+    {
+        addLogLine_switches_tab = false;
+        let c = $("#build_log").empty();
+        if (data.build_log)
+        {
+            data.build_log.forEach(function(item) {
+                if (item.i) {
+                    c.append($('<div/>').addClass('info').text(item.i));
+                }
+                if (item.e) {
+                    c.append($('<div/>').addClass('err').text(item.e));
+                }
+                if (item.o) {
+                    c.append($('<div/>').addClass('std').text(item.o));
+                }
+            });
+        }
+        logTabs.select(0);
+    }
+
+    if (state == "successful") {
+        window.setTimeout(function() { addLogLine_switches_tab = true; }, 5000);
+        $.growl.notice({ message: "&#x2714; Compilation successful" });
+    } else if (state == "failed") {
+        $.growl.error({ message: "&#x26A1; Compilation failed" });
+    } else if (state == "crashed") {
+        $.growl.error({ message: "&#x1F480; Crashed on startup" });
     }
 }
 
@@ -198,20 +245,28 @@ function save(action, title)
         'comment': title,
         'parent': snake_id
     };
+
     $.post('/snake/edit/save', JSON.stringify(json_req), function(data) {
         snake_id = data.snake_id;
         snake_title = data.comment;
         game.vis.FollowName(snake_follow_name, true);
+
         let logline = 'saved code as version #' + data.version;
         if (data.comment) { logline += "(\"" + data.comment + "\")"; }
-        addLogLine(null, logline);
 
-        editor.session.getUndoManager().markClean()
+        $.growl.notice({ message: logline });
+
+        editor.session.getUndoManager().markClean();
+
+        if (action == 'run') {
+            addLogLine_switches_tab = false;
+            logTabs.select(0);
+            let info = $('<div/>').addClass('info').text(logline + ", waiting for build output");
+            $("#build_log").empty().append(info);
+            pollCompileState();
+        }
+
     });
-
-    if(action == 'run') {
-        updateCompileState('not_compiled');
-    }
 }
 
 function showLoadDialog(data)
@@ -268,6 +323,37 @@ function addLogLine(frame, msg)
     {
         logWindow.scrollTop = logWindow.scrollHeight - logWindow.clientHeight;
     }
+
+    if (addLogLine_switches_tab)
+    {
+        logTabs.select(1);
+    }
+}
+
+function updatePersistentMemory()
+{
+    $('#hexdump').text('');
+    var req = new XMLHttpRequest();
+    req.open('GET', '/api/v1/profile/persistent_data', true);
+    req.responseType = "arraybuffer";
+    req.onload = function(oEvent) {
+        let byteArray = new Uint8Array(req.response)
+        $('#hexdump').text(hexy(byteArray));
+    };
+    req.send();
+}
+
+function uploadPersistentData(e)
+{
+    let file = e.target.files[0];
+    $.ajax({
+        type: 'POST',
+        url: '/api/v1/profile/persistent_data',
+        data: file,
+        processData: false,
+        contentType: false,
+        success: updatePersistentMemory
+    });
 }
 
 window.onbeforeunload = function (e) {

@@ -7,6 +7,7 @@
 
 {% block css %}
   <link rel="stylesheet" type="text/css" href="{% static "ide/ide.css" %}" />
+  <link rel="stylesheet" type="text/css" href="{% static "ide/tabs.css" %}" />
 {% endblock %}
 
 {% block content %}
@@ -17,9 +18,19 @@
 
 <div id="ide" class="fullwindow">
   <div id="editor"></div>
-  <div id="preview"></div>
-  <div id="log"></div>
-  <div id="compile_state">Loading...</div>
+  <div id="sidebar" class="tab_view">
+    <div id="preview"></div>
+    <div id="persistent_memory">
+      <div>
+        <button id="refresh_persistent_memory">Refresh</button>
+        <button id="persistent_data_download">Download</button>
+        <input id="persistent_data_file" type="file" style="display:none">
+        <button id="persistent_data_upload">Upload</button>
+        <button id="persistent_data_clear">Delete</button>
+      </div>
+      <pre id="hexdump"></pre>
+    </div>
+  </div>
   <div id="tools">
     <div id="toolbar">
       <button id="bt_run" title="Ctrl+R">run</button>
@@ -30,6 +41,19 @@
       <button id="bt_load" title="Ctrl+O">load</button>
       <button>preferences</button>
     </div>
+  </div>
+  <div id="logviews" class="tab_view">
+    <div id="build_log">
+    </div>
+    <div id="log"></div>
+  </div>
+  <div id="logtabs" class="tab_bar">
+    <button id="show_build_output">build output</button>
+    <button id="show_log_output">log output</button>
+  </div>
+  <div id="sidebartabs" class="tab_bar">
+    <button>Live View</button>
+    <button>Memory</button>
   </div>
 </div>
 
@@ -71,6 +95,8 @@
   let csrftoken = $("[name=csrfmiddlewaretoken]").val();
 </script>
 <script src="{% static "ide/ace/src-noconflict/ace.js" %}" type="text/javascript" charset="utf-8"></script>
+<script src="{% static "ide/tabs.js" %}" type="text/javascript" charset="utf-8"></script>
+<script src="{% static "ide/hexy.js" %}" type="text/javascript" charset="utf-8"></script>
 <script src="{% static "ide/ide.js" %}" type="text/javascript" charset="utf-8"></script>
 {% include "visualization/js.html" %}
 {% endblock %}
