@@ -29,6 +29,11 @@
 
 {% block content %}
   <h1>API Keys</h1>
+  <div style="margin-bottom:1em;margin-left:1em">
+  Use these API keys either as a ?token=12345678-... GET parameter<br>
+    or as content of a HTTP_AUTHORIZATION HTTP header<br>
+    to access the REST API the same way your browser does.
+  </div>
 {% if user.apikey_set.all %}
   <table class="api_keys">
     <thead>
