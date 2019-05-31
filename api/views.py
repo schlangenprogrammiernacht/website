@@ -52,6 +52,7 @@ def full_version_dict(v):
     d = version_dict(v)
     d['code'] = v.code
     d['build_log'] = decode_build_log(v.build_log)
+    return d
 
 @require_http_methods(['GET', 'POST', 'PUT'])
 @bot_api
