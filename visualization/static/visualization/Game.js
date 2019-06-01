@@ -12,6 +12,7 @@ function Game(assets, snakeMoveStrategy, container, readyfunc)
     this.gameEventHandlers = [];
     this.gameInfoReceived = false;
     this.preGameInfoMessages = [];
+    this.parseOnlyLogMessages = false;
 
     let vis=this.vis;
     $("#followmsg").click(function(event) {
@@ -82,6 +83,20 @@ Game.prototype.SetViewerKey = function(key)
 Game.prototype.HandleMessage = function(event)
 {
     let data = JSON.parse(event.data);
+
+    if (data.t == "Log")
+    {
+        for (let item of this.logHandlers)
+        {
+            item[0].call(item[1], data.frame, data.msg);
+        }
+        return;
+    }
+
+    if (this.parseOnlyLogMessages)
+    {
+        return;
+    }
 
     if (data.t == "GameInfo")
     {
@@ -163,13 +178,6 @@ Game.prototype.HandleMessage = function(event)
             for (let item of data.items)
             {
                 this.vis.HandleFoodDecayedMessage(item);
-            }
-            return;
-
-        case "Log":
-            for (let item of this.logHandlers)
-            {
-                item[0].call(item[1], data.frame, data.msg);
             }
             return;
 

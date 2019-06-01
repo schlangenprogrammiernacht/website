@@ -13,7 +13,6 @@ $(function() {
 
     sidebarTabs = new TabBar($('#sidebartabs'), $('#sidebar'));
     sidebarTabs.init();
-    sidebarTabs.select(0);
     $('#persistent_memory').on('select', updatePersistentMemory);
     $('#refresh_persistent_memory').click(updatePersistentMemory);
     $('#persistent_data_upload').click(function() { $('#persistent_data_file').click()});
@@ -33,7 +32,9 @@ $(function() {
     setupEditor();
     setupToolbar();
     setupShortcuts();
+    sidebarTabs.select(0);
     setupPreview();
+
 
     $.ajaxSetup({
         beforeSend: function(xhr, settings) {
@@ -68,6 +69,25 @@ function setupEditor()
     });
 }
 
+function disablePreview()
+{
+    if (!window.location.hash.includes('no_preview'))
+    {
+        window.location.href = window.location.href + '#no_preview';
+    }
+    game.parseOnlyLogMessages = true;
+    sidebarTabs.select(1);
+    $('#bt_preview').hide();
+    $('#bt_disable_preview').hide();
+    $('#bt_enable_preview').show();
+}
+
+function enablePreview()
+{
+    window.location.hash = '';
+    window.location.reload();
+}
+
 function setupPreview()
 {
     game = new Game(assets, strategy, document.getElementById('preview'), function() {
@@ -76,6 +96,10 @@ function setupPreview()
         game.Run();
         game.vis.FollowName(snake_follow_name, true);
     });
+    if (window.location.hash.includes('no_preview'))
+    {
+        disablePreview();
+    }
 }
 
 function setupToolbar()
@@ -125,6 +149,8 @@ function setupToolbar()
         });
     });
 
+    $('#bt_disable_preview').click(disablePreview);
+    $('#bt_enable_preview').click(enablePreview);
 }
 
 function setupShortcuts()
