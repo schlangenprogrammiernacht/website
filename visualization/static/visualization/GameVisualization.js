@@ -1,5 +1,7 @@
 "use strict";
 
+var persistentRessources = null;
+
 function GameVisualization(assets, snakeMoveStrategy, container, readyfunc)
 {
     this.container = container;
@@ -34,16 +36,38 @@ function GameVisualization(assets, snakeMoveStrategy, container, readyfunc)
 
     let self = this;
     this.assets = assets;
+    if (persistentRessources)
+    {
+        self.txHead = persistentRessources.txHead;
+        self.txBody = persistentRessources.txBody;
+        self.txFood = persistentRessources.txFood;
+        self.segmentPool = persistentRessources.segmentPool;
+        self.foodItemPool = persistentRessources.foodItemPool;
+        readyfunc();
+        return;
+    }
+
     PIXI.loader.add([assets['head.png'], assets['body.png'], assets['food.png']]).load(function() {
-        self.txHead = PIXI.loader.resources[self.assets['head.png']].texture;
-        self.txBody = PIXI.loader.resources[self.assets['body.png']].texture;
-        self.txFood = PIXI.loader.resources[self.assets['food.png']].texture;
-        self.segmentPool = new ObjectPool(function() {
+        persistentRessources =
+        {
+            'txHead': PIXI.loader.resources[self.assets['head.png']].texture,
+            'txBody': PIXI.loader.resources[self.assets['body.png']].texture,
+            'txFood': PIXI.loader.resources[self.assets['food.png']].texture,
+        };
+        self.txHead = persistentRessources.txHead;
+        self.txBody = persistentRessources.txBody;
+        self.txFood = persistentRessources.txFood;
+
+        persistentRessources.segmentPool = new ObjectPool(function() {
             return new SnakeSegment(self.txBody);
         }, self, 10000);
-        self.foodItemPool = new ObjectPool(function() {
+        persistentRessources.foodItemPool = new ObjectPool(function() {
             return new FoodSprite(self.txFood);
         }, self, 10000);
+
+        self.segmentPool = persistentRessources.segmentPool;
+        self.foodItemPool = persistentRessources.foodItemPool;
+
         readyfunc();
     });
 }
