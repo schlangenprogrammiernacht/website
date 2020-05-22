@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.db.models import F, Max, ExpressionWrapper, FloatField
+from django.db.models import F, Max, ExpressionWrapper, FloatField, Count
 from core.models import SnakeGame
 from django.db import models
 from django.conf import settings
@@ -111,4 +111,36 @@ def consumerate(request):
             usr = usr[0]
     else:
         usr = False
-    return table(request, data, usr, 'Consume Rate', 'highscore')
+    return table(request, data, usr, 'Consume Rate', 'highscore_kills')
+
+
+def kills(request):
+    data = get_relevant_games().\
+        values('killer__username').\
+        annotate(score=Count('killer_id')).\
+        order_by('-score').\
+        annotate(user__username=F('killer__username'))
+
+    if request.user.is_authenticated:
+        usr = get_relevant_games().filter(killer=request.user).aggregate(score=Count('killer_id'))
+        if usr['score'] == None:
+            usr = False
+    else:
+        usr = False
+    return table(request, data, usr, 'Killcount', 'highscore_deaths')
+
+
+def deaths(request):
+    data = get_relevant_games().\
+        values('user__username').\
+        annotate(score=Count('user_id')).\
+        order_by('score')
+
+    if request.user.is_authenticated:
+        usr = get_relevant_games().filter(user=request.user).aggregate(score=Count('user_id'))
+        if usr['score'] == None:
+            usr = False
+    else:
+        usr = False
+    return table(request, data, usr, 'Deathcount', 'highscore')
+
