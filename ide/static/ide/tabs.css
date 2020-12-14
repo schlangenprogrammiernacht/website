@@ -1,7 +1,7 @@
 .tab_bar button {
     color:white;
-    background-color: #333130;
-    border: 2px solid #767270;
+    background-color: #440069;
+    border: 2px solid #FFE8D8;
     border-top:none;
     margin: 0;
     padding: 3px 10px;
@@ -9,11 +9,16 @@
     border-radius: 0 0 0.6em 0.6em;
 }
 
-.tab_bar button.active {
-    background-color: #b28e27;
-    border: 2px solid #b28e27;
+.tab_bar button.active, .tab_bar button.active:hover {
+    background-color: #0076A9;
+    border: 2px solid #0076A9;
     border-top:none;
 }
+
+.tab_bar button:hover {
+    background-color: #025D84;
+}
+
 
 .tab_view > div {
     display:none;

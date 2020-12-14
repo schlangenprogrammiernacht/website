@@ -1,3 +1,11 @@
+/* RC3 colortable:
+ * B239FF 670295 440069 240038
+ * 6800E7 4100hB 2A005E 14002F
+ * 05B9EC 0076A9 025D84 002A3A
+ * "black": 100E23
+ * "white": FFE8D8
+ */
+
 html {
     margin: 0;
     padding: 0;
@@ -5,8 +13,8 @@ html {
 }
 
 body {
-    background-color:#000000;
-    color:#DDD;
+    background-color:#100E23;
+    color:#FFE8D8;
     font-family: Verdana, "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;
     font-size:16pt;
     margin:0;
@@ -14,7 +22,7 @@ body {
     height: 100%;
     max-height: 100%;
     width: 100%;
-    background-image: url("/static/core/gpn19_bg.svg");
+    /*background-image: url("/static/core/gpn19_bg.svg");*/
     background-repeat: no-repeat;
     background-position: center;
     background-size:cover;
@@ -29,7 +37,7 @@ body {
 }
 
 h1,h2 {
-    color: #fac737;
+    color: #B239FF;
 }
 
 a {
@@ -37,7 +45,7 @@ a {
 }
 
 ul.nav {
-    background-color:#333130;
+    background-color:#240038;
     text-align: center;
     padding: 4px 0;
     margin:0;
@@ -54,12 +62,12 @@ ul.nav li a {
 }
 
 ul.nav li a, .footer a {
-    color:white;
+    color: #FFE8D8;
     text-decoration: none;
 }
 
 ul.nav li:hover {
-    background-color: #b28e27;
+    background-color: #670295;
 }
 
 ul.sub.nav {
@@ -73,6 +81,7 @@ ul.sub.nav {
 
 a:hover {
     text-decoration: underline;
+    color: #05B9EC;
 }
 
 h1 {
@@ -96,7 +105,7 @@ div.footer {
     bottom:0;
     width:100%;
     padding:3px;
-    background-color:#333130;
+    background-color:#240038;
 }
 
 #snake

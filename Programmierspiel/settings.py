@@ -109,7 +109,7 @@ STATIC_URL = '/static/'
 # Set either FROM and TILL or RANGE to select which games to include in the highscore
 HIGHSCORE_DT_FROM = None #datetime.datetime(1, 1, 1, 0, 0, tzinfo=pytz.UTC)
 HIGHSCORE_DT_TILL = None #datetime.datetime(9999, 12, 31, 23, 59, tzinfo=pytz.UTC)
-HIGHSCORE_DT_RANGE = datetime.timedelta(hours=24)
+HIGHSCORE_DT_RANGE = datetime.timedelta(days=9999)
 HIGHSCORE_BLACKLIST = []
 
 PERSISTENT_MEMORY_SIZE = 4096
