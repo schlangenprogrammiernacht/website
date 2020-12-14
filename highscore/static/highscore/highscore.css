@@ -4,9 +4,32 @@
 }
 
 .ui.table.highscore-table {
-  font-size: .6em;
-  width: 60%;
+    background-color: #002A3A;
+    font-size: .6em;
+    width: 60%;
+    border-radius: 0.3em;
+    border-collapse: collapse;
 }
+
+.highscore-table * td, .highscore-table * th {
+    padding: 0.5em;
+    border-top: 1px solid #025D84;
+    border-bottom: 1px solid #025D84;
+}
+
+.highscore-table * tr:hover {
+    background-color: #025D84;
+}
+
+td.right {
+    text-align: right;
+}
+
+.highscore-table * th {
+    background-color: #025D84;
+    text-align: left;
+}
+
 /*
 .highscore-table thead th {
   background-color: #333;

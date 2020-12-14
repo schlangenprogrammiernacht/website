@@ -82,7 +82,7 @@
 }
 
 button, .button {
-    color:white;
+    color:#FFE8D8;
     border: none;
     background-color: #0076A9;
     border-radius:1em;
@@ -126,16 +126,16 @@ div.modal>div {
     position: fixed;
     top: 50%; left: 50%;
     transform: translate(-50%, -50%);
-    background-color: #321700;
-    border:2px solid #613600;
+    background-color: #002A3A;
+    border:2px solid #025D84;
     font-size:14pt;
-    color:white;
+    color:#FFE8D8;
     width: 20em;
     height:10em;
 }
 
 div.modal>div>header {
-    background-color: #613600;
+    background-color: #025D84;
     text-align:center;
 }
 
@@ -150,7 +150,7 @@ div.modal div.main {
 div.modal>div>footer {
     position:fixed;
     bottom:0; left:0; width:100%;
-    background-color: #613600;
+    background-color: #025D84;
     text-align:right;
 }
 
