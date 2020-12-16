@@ -54,7 +54,7 @@ $(window).resize(function() {
 function setupEditor()
 {
     editor = ace.edit("editor");
-    editor.setTheme("ace/theme/idle_fingers");
+    editor.setTheme("ace/theme/vibrant_ink");
     editor.session.setMode("ace/mode/c_cpp");
     editor.setShowPrintMargin(false);
     let textarea = $('#code').hide();

@@ -96,6 +96,7 @@ div.content {
 
 div.content > div.panel {
     margin-left: 200px;
+    margin-right: 200px;
 }
 
 div.footer {
