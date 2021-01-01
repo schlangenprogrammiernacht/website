@@ -88,6 +88,7 @@ GameVisualization.prototype.Run = function()
 {
     this.container.appendChild(this.app.view);
     this.Resize();
+    this.app.ticker.maxFPS = 60;
     this.app.ticker.add(this.GameTick, this);
 };
 
