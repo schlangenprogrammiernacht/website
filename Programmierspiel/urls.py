@@ -7,6 +7,7 @@ from core import views as core_views
 
 urlpatterns = [
     path('', TemplateView.as_view(template_name='core/index.html'), name='home'),
+    path('privacy/', TemplateView.as_view(template_name='core/privacy.html'), name='privacy'),
     path('admin/', admin.site.urls),
     path('signup/', core_views.signup, name='signup'),
     path('password/', core_views.change_password, name='change_password'),
