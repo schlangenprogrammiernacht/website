@@ -15,6 +15,9 @@ function GameVisualization(assets, snakeMoveStrategy, container, readyfunc)
     this.food_decay_rate = 0.001;
     this.foodItems = {};
 
+    // work around a problem in Firefox: https://github.com/pixijs/pixi.js/issues/7070
+    PIXI.settings.FAIL_IF_MAJOR_PERFORMANCE_CAVEAT = false;
+
     this.app = new PIXI.Application({'transparent':false});
     this.viewport = new PIXI.extras.Viewport({
         screenWidth: this.container.clientWidth,
