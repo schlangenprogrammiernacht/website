@@ -2,6 +2,6 @@ Django==2.2.18
 django-widget-tweaks==1.4.8
 gunicorn==19.9.0
 mysqlclient==1.4.2.post1
-Pillow==8.1.1
+Pillow==8.3.2
 pytz==2019.1
 sqlparse==0.3.0
