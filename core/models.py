@@ -10,6 +10,23 @@ def get_user_profile(user):
     return profile
 
 
+class ProgrammingLanguage(models.Model):
+    class Meta:
+        get_latest_by = "created"
+        unique_together = ('slug', 'readable_name')
+
+    # A short version of the Language name that can be used in file names, URLs, etc.
+    slug = models.CharField(max_length=16)
+
+    # The official, full name of the Language
+    readable_name = models.CharField(max_length=256)
+
+    # The file extension used for source files, without the separating '.'
+    file_extension = models.CharField(max_length=8)
+
+    def __str__(self):
+        return f"ProgrammingLanguage [{self.slug}] {self.readable_name}"
+
 class SnakeVersion(models.Model):
     class Meta:
         get_latest_by = "created"
@@ -25,6 +42,7 @@ class SnakeVersion(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     parent = models.ForeignKey("SnakeVersion", blank=True, null=True, on_delete=models.SET_NULL)
     created = models.DateTimeField(default=now, blank=True)
+    programming_language = models.ForeignKey("ProgrammingLanguage", blank=True, on_delete=models.PROTECT)
     code = models.TextField()
     comment = models.CharField(max_length=1000, blank=True, null=True)
     version = models.IntegerField()
