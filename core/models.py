@@ -25,7 +25,7 @@ class ProgrammingLanguage(models.Model):
     file_extension = models.CharField(max_length=8)
 
     def __str__(self):
-        return f"ProgrammingLanguage [{self.slug}] {self.readable_name}"
+        return f"[{self.slug}] {self.readable_name}"
 
 class SnakeVersion(models.Model):
     class Meta:
