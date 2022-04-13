@@ -34,13 +34,7 @@
   </div>
   <div id="tools">
     <div id="toolbar">
-      <button id="bt_run" title="Ctrl+R">run</button>
-      <button id="bt_restart">restart</button>
-      <button id="bt_stop">stop</button>
-      <button id="bt_save" title="Ctrl+S">save</button>
-      <button id="bt_save_as" title="Ctrl+Shift+S">save as</button>
-      <button id="bt_load" title="Ctrl+O">load</button>
-      <select id="sel_programming_language">
+      <select id="sel_programming_language" title="Choose a programming language. Your latest code in this language will be loaded. If you did not write any code in this language yet, an example will be loaded.">
         {% for lang in programming_languages %}
           {% if lang.id == snake.programming_language.id %}
             <option value="{{ lang.slug }}" selected>{{ lang.readable_name }}</option>
@@ -49,6 +43,12 @@
           {% endif %}
         {% endfor %}
       </select>
+      <button id="bt_run" title="Ctrl+R">run</button>
+      <button id="bt_restart">restart</button>
+      <button id="bt_stop">stop</button>
+      <button id="bt_save" title="Ctrl+S">save</button>
+      <button id="bt_save_as" title="Ctrl+Shift+S">save as</button>
+      <button id="bt_load" title="Ctrl+O">load</button>
       <button id="bt_disable_preview">disable live view</button>
       <button id="bt_enable_preview" style="display:none">enable live view</button>
     </div>

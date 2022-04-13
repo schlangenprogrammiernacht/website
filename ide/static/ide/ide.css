@@ -83,8 +83,19 @@
 
 button, .button {
     color:white;
-    border: none;
-    background-color: #b28e27;
+    border: 1px solid #ccc;
+    background-color: #7e580e;
+    border-radius:1em;
+    margin:5px 5px;
+    padding:3px 10px;
+    font-size:14pt;
+    text-decoration: none;
+}
+
+select {
+    color:white;
+    border: 1px solid #ccc;
+    background-color: #465c13;
     border-radius:1em;
     margin:5px 5px;
     padding:3px 10px;
