@@ -192,6 +192,11 @@ div.modal>div>footer {
 
 #load_dialog .list>div>div:nth-child(3)
 {
+    width:6em; text-align: left;
+}
+
+#load_dialog .list>div>div:nth-child(4)
+{
     width:400px; text-align: left;
 }
 

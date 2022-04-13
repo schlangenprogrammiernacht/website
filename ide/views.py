@@ -6,7 +6,7 @@ from django.http import JsonResponse, HttpResponseBadRequest
 from django.shortcuts import render, redirect, get_object_or_404
 from django.template.loader import render_to_string
 from django.views.decorators.http import require_POST
-from core.models import SnakeVersion, ServerCommand, get_user_profile
+from core.models import SnakeVersion, ServerCommand, get_user_profile, ProgrammingLanguage
 
 
 class CreateSnakeForm(ModelForm):
@@ -23,6 +23,7 @@ def snake_list(request):
             'id': s.id,
             'version': s.version,
             'title': s.comment or '',
+            'programming_language': s.programming_language.readable_name or '(unknown)',
             'date': s.created.strftime("%d.%m.%Y %H:%M:%S")
         } for s in snakes
     ]}
@@ -67,11 +68,26 @@ def snake_save(request):
 
     comment = json_req.get('comment')
 
+    programming_language = json_req.get('programming_language')
+    if programming_language is None:
+        return HttpResponseBadRequest('programming_language not defined')
+
+    try:
+        proglang = ProgrammingLanguage(pk=programming_language)
+    except ProgrammingLanguage.DoesNotExist:
+        return HttpResponseBadRequest('programming_language is invalid')
+
+    snake_args = {
+            "code": code,
+            "comment": comment,
+            "programming_language": proglang
+        }
+
     try:
         snake = SnakeVersion.objects.get(pk=json_req.get('parent'), user=request.user)
-        snake = snake.create_new_if_changed(code=code, comment=comment)
+        snake = snake.create_new_if_changed(**snake_args)
     except SnakeVersion.DoesNotExist:
-        snake = SnakeVersion(user=request.user, code=code, comment=comment, parent=None)
+        snake = SnakeVersion(user=request.user, parent=None, **snake_args)
         snake.save()
 
     if action == "run":

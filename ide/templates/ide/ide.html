@@ -13,6 +13,7 @@
 {% block content %}
 <form id="snake_edit_form" method="post">
   {% csrf_token %}
+  <input type="hidden" id="programming_language" name="programming_language" value="{{ snake.programming_language.id }}" />
   <textarea id="code" name="code">{{ snake.code }}</textarea>
 </form>
 
@@ -93,6 +94,7 @@
   let snake_id = {{ snake.id | default:"null" }};
   let snake_follow_name = "{{ snake.user.username }}";
   let viewer_key = "{{ profile.viewer_key }}";
+  let programming_language = "{{ snake.programming_language.id | default:"null" }}";
   let csrftoken = $("[name=csrfmiddlewaretoken]").val();
 </script>
 <script src="{% static "ide/ace/src-noconflict/ace.js" %}" type="text/javascript" charset="utf-8"></script>

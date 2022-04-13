@@ -269,7 +269,8 @@ function save(action, title)
         'action': action,
         'code': editor.getSession().getValue(),
         'comment': title,
-        'parent': snake_id
+        'parent': snake_id,
+        'programming_language': programming_language
     };
 
     $.post('/snake/edit/save', JSON.stringify(json_req), function(data) {
@@ -305,7 +306,7 @@ function showLoadDialog(data)
     list.empty();
 
     $.each(data.versions, function(i, version) {
-        let item = $('<div><div>'+version.version+'</div><div>'+version.date+'</div><div>'+version.title+'</div></div>');
+        let item = $('<div><div>'+version.version+'</div><div>'+version.date+'</div><div>'+version.programming_language+'</div><div>'+version.title+'</div></div>');
         item.click(function() {
             list.children('div').removeClass('selected');
             item.addClass('selected');
