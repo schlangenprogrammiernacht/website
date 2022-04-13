@@ -24,6 +24,9 @@ class ProgrammingLanguage(models.Model):
     # The file extension used for source files, without the separating '.'
     file_extension = models.CharField(max_length=8)
 
+    # Mode name for the ACE editor
+    editor_mode = models.CharField(max_length=32)
+
     def __str__(self):
         return f"[{self.slug}] {self.readable_name}"
 

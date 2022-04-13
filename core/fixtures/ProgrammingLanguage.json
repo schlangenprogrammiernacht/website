@@ -5,7 +5,8 @@
     "fields": {
       "slug": "cpp",
       "readable_name": "C++",
-      "file_extension": "cpp"
+      "file_extension": "cpp",
+      "editor_mode": "c_cpp"
       }
   },
   {
@@ -14,7 +15,8 @@
     "fields": {
       "slug": "rust",
       "readable_name": "Rust",
-      "file_extension": "rs"
+      "file_extension": "rs",
+      "editor_mode": "rust"
       }
   }
 ]
