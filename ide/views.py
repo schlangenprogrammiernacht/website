@@ -54,6 +54,21 @@ def snake_edit_version(request, snake_id):
 
 
 @login_required
+def snake_edit_by_language(request, lang_slug):
+    try:
+        proglang = ProgrammingLanguage.objects.get(slug=lang_slug)
+    except ProgrammingLanguage.DoesNotExist:
+        return HttpResponseBadRequest('Programming Language is unknown')
+
+    print(proglang)
+
+    try:
+        return snake_edit(request, SnakeVersion.get_latest_for_user(request.user, programming_language=proglang))
+    except SnakeVersion.DoesNotExist:
+        return snake_create(request)
+
+
+@login_required
 @require_POST
 def snake_save(request):
     json_req = json.loads(request.body.decode('utf-8'))
@@ -73,7 +88,7 @@ def snake_save(request):
         return HttpResponseBadRequest('programming_language not defined')
 
     try:
-        proglang = ProgrammingLanguage(pk=programming_language)
+        proglang = ProgrammingLanguage.objects.get(pk=programming_language)
     except ProgrammingLanguage.DoesNotExist:
         return HttpResponseBadRequest('programming_language is invalid')
 
@@ -111,7 +126,11 @@ def snake_edit(request, snake):
         send_kill_command(snake.user)
         return redirect('snake_edit', snake_id=snake.id)
 
-    return render(request, 'ide/ide.html', {'form': form, 'snake': snake, 'profile': get_user_profile(request.user)})
+    proglangs = ProgrammingLanguage.objects.all()
+
+    print(proglangs)
+
+    return render(request, 'ide/ide.html', {'form': form, 'snake': snake, 'profile': get_user_profile(request.user), 'programming_languages': proglangs})
 
 
 @login_required

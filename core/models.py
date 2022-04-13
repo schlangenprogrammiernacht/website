@@ -70,8 +70,12 @@ class SnakeVersion(models.Model):
         UserProfile.objects.update_or_create(user=self.user, defaults={'active_snake': self})
 
     @staticmethod
-    def get_latest_for_user(user):
-        return SnakeVersion.objects.filter(user=user).latest('created')
+    def get_latest_for_user(user, programming_language=None):
+        filter_args = {"user": user}
+        if programming_language != None:
+            filter_args["programming_language"] = programming_language
+
+        return SnakeVersion.objects.filter(**filter_args).latest('created')
 
     def __str__(self):
         return "Snake " + str(self.version) + " by " + self.user.username

@@ -151,6 +151,10 @@ function setupToolbar()
 
     $('#bt_disable_preview').click(disablePreview);
     $('#bt_enable_preview').click(enablePreview);
+
+    $('#sel_programming_language').change(function() {
+        window.location.href = '/snake/edit/lang/' + $('#sel_programming_language').val();
+    });
 }
 
 function setupShortcuts()

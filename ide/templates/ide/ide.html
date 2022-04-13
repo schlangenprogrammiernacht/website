@@ -40,6 +40,15 @@
       <button id="bt_save" title="Ctrl+S">save</button>
       <button id="bt_save_as" title="Ctrl+Shift+S">save as</button>
       <button id="bt_load" title="Ctrl+O">load</button>
+      <select id="sel_programming_language">
+        {% for lang in programming_languages %}
+          {% if lang.id == snake.programming_language.id %}
+            <option value="{{ lang.slug }}" selected>{{ lang.readable_name }}</option>
+          {% else %}
+            <option value="{{ lang.slug }}">{{ lang.readable_name }}</option>
+          {% endif %}
+        {% endfor %}
+      </select>
       <button id="bt_disable_preview">disable live view</button>
       <button id="bt_enable_preview" style="display:none">enable live view</button>
     </div>
