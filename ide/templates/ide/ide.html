@@ -104,6 +104,7 @@
   let snake_follow_name = "{{ snake.user.username }}";
   let viewer_key = "{{ profile.viewer_key }}";
   let programming_language = "{{ snake.programming_language.id | default:"null" }}";
+  let editor_mode = "{{ snake.programming_language.editor_mode | default:"text" }}";
   let csrftoken = $("[name=csrfmiddlewaretoken]").val();
 </script>
 <script src="{% static "ide/ace/src-noconflict/ace.js" %}" type="text/javascript" charset="utf-8"></script>
