@@ -1,4 +1,5 @@
 import json
+from os import path
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.forms import ModelForm
@@ -31,9 +32,17 @@ def snake_list(request):
 
 
 @login_required
-def snake_create(request):
+def snake_create(request, programming_language=None):
+    # if programming language is not given, use the first in the database
+    if programming_language == None:
+        programming_language = ProgrammingLanguage.objects.all()[0]
+
+    ext = programming_language.file_extension
+    code_filename = path.join("ide", "example_code", f"initial-bot.{ext}")
+
     snake = SnakeVersion(user=request.user)
-    snake.code = render_to_string('ide/initial-bot.cpp')
+    snake.code = open(code_filename, "r").read()
+    snake.programming_language = programming_language
     return snake_edit(request, snake)
 
 
@@ -65,7 +74,7 @@ def snake_edit_by_language(request, lang_slug):
     try:
         return snake_edit(request, SnakeVersion.get_latest_for_user(request.user, programming_language=proglang))
     except SnakeVersion.DoesNotExist:
-        return snake_create(request)
+        return snake_create(request, proglang)
 
 
 @login_required
