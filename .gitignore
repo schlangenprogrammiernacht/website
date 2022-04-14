@@ -7,4 +7,4 @@ Programmierspiel/local_settings.py
 .vscode/tags
 .history
 
-docs/static/docs/doxygen_cpp/
+docs/static/docs/*/
