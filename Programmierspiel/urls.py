@@ -16,6 +16,7 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
     path('watch/', TemplateView.as_view(template_name='visualization/watch.html'), name='watch'),
     path('tv/', TemplateView.as_view(template_name='visualization/tv.html'), name='tv'),
+    path('miniview/', TemplateView.as_view(template_name='visualization/miniview.html'), name='miniview'),
     path('accounts/profile/', RedirectView.as_view(url='/', permanent=False)),
     path('snake/', include('ide.urls')),
     path('highscore/', include('highscore.urls')),
