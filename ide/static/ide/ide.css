@@ -68,6 +68,10 @@
     padding-left:10px;
 }
 
+#build_log div {
+	white-space: pre-wrap;
+}
+
 #build_log .err {
     color:red;
 }
