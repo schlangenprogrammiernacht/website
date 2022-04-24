@@ -75,13 +75,14 @@ def get_version(request, version_id):
 def get_compile_state(request):
     profile = get_user_profile(request.user)
     snake = profile.active_snake
+    build_queue_size = len(SnakeVersion.objects.filter(compile_state='not_compiled'))
+
+    data = {'build_queue_size': build_queue_size}
     if snake:
-        return JsonResponse({
-            'compile_state': str(snake.compile_state),
-            'build_log': decode_build_log(snake.build_log)
-        })
-    else:
-        return JsonResponse({})
+        data['compile_state'] = str(snake.compile_state)
+        data['build_log'] = decode_build_log(snake.build_log)
+
+    return JsonResponse(data)
 
 
 @require_http_methods(['GET','POST','PUT','DELETE'])

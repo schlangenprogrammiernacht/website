@@ -203,7 +203,8 @@ function updateCompileState(data)
 
     if (state == "not_compiled")
     {
-        window.setTimeout(pollCompileState, 1000);
+        $("#build_log").append($('<div/>').addClass('info').text("Build queue length: " + data.build_queue_size));
+        window.setTimeout(pollCompileState, 2000);
         return;
     }
     else
