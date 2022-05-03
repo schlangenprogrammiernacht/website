@@ -13,6 +13,7 @@
 {% block content %}
 <form id="snake_edit_form" method="post">
   {% csrf_token %}
+  <input type="hidden" id="programming_language" name="programming_language" value="{{ snake.programming_language.id }}" />
   <textarea id="code" name="code">{{ snake.code }}</textarea>
 </form>
 
@@ -33,6 +34,15 @@
   </div>
   <div id="tools">
     <div id="toolbar">
+      <select id="sel_programming_language" title="Choose a programming language. Your latest code in this language will be loaded. If you did not write any code in this language yet, an example will be loaded.">
+        {% for lang in programming_languages %}
+          {% if lang.id == snake.programming_language.id %}
+            <option value="{{ lang.slug }}" selected>{{ lang.readable_name }}</option>
+          {% else %}
+            <option value="{{ lang.slug }}">{{ lang.readable_name }}</option>
+          {% endif %}
+        {% endfor %}
+      </select>
       <button id="bt_run" title="Ctrl+R">run</button>
       <button id="bt_restart">restart</button>
       <button id="bt_stop">stop</button>
@@ -93,6 +103,8 @@
   let snake_id = {{ snake.id | default:"null" }};
   let snake_follow_name = "{{ snake.user.username }}";
   let viewer_key = "{{ profile.viewer_key }}";
+  let programming_language = "{{ snake.programming_language.id | default:"null" }}";
+  let editor_mode = "{{ snake.programming_language.editor_mode | default:"text" }}";
   let csrftoken = $("[name=csrfmiddlewaretoken]").val();
 </script>
 <script src="{% static "ide/ace/src-noconflict/ace.js" %}" type="text/javascript" charset="utf-8"></script>

@@ -1,4 +1,5 @@
 import json
+from os import path
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.forms import ModelForm
@@ -6,7 +7,7 @@ from django.http import JsonResponse, HttpResponseBadRequest
 from django.shortcuts import render, redirect, get_object_or_404
 from django.template.loader import render_to_string
 from django.views.decorators.http import require_POST
-from core.models import SnakeVersion, ServerCommand, get_user_profile
+from core.models import SnakeVersion, ServerCommand, get_user_profile, ProgrammingLanguage
 
 
 class CreateSnakeForm(ModelForm):
@@ -23,6 +24,7 @@ def snake_list(request):
             'id': s.id,
             'version': s.version,
             'title': s.comment or '',
+            'programming_language': s.programming_language.readable_name or '(unknown)',
             'date': s.created.strftime("%d.%m.%Y %H:%M:%S")
         } for s in snakes
     ]}
@@ -30,9 +32,17 @@ def snake_list(request):
 
 
 @login_required
-def snake_create(request):
+def snake_create(request, programming_language=None):
+    # if programming language is not given, use the first in the database
+    if programming_language == None:
+        programming_language = ProgrammingLanguage.objects.all()[0]
+
+    ext = programming_language.file_extension
+    code_filename = path.join("ide", "example_code", f"initial-bot.{ext}")
+
     snake = SnakeVersion(user=request.user)
-    snake.code = render_to_string('ide/initial-bot.cpp')
+    snake.code = open(code_filename, "r").read()
+    snake.programming_language = programming_language
     return snake_edit(request, snake)
 
 
@@ -53,6 +63,21 @@ def snake_edit_version(request, snake_id):
 
 
 @login_required
+def snake_edit_by_language(request, lang_slug):
+    try:
+        proglang = ProgrammingLanguage.objects.get(slug=lang_slug)
+    except ProgrammingLanguage.DoesNotExist:
+        return HttpResponseBadRequest('Programming Language is unknown')
+
+    print(proglang)
+
+    try:
+        return snake_edit(request, SnakeVersion.get_latest_for_user(request.user, programming_language=proglang))
+    except SnakeVersion.DoesNotExist:
+        return snake_create(request, proglang)
+
+
+@login_required
 @require_POST
 def snake_save(request):
     json_req = json.loads(request.body.decode('utf-8'))
@@ -67,11 +92,26 @@ def snake_save(request):
 
     comment = json_req.get('comment')
 
+    programming_language = json_req.get('programming_language')
+    if programming_language is None:
+        return HttpResponseBadRequest('programming_language not defined')
+
+    try:
+        proglang = ProgrammingLanguage.objects.get(pk=programming_language)
+    except ProgrammingLanguage.DoesNotExist:
+        return HttpResponseBadRequest('programming_language is invalid')
+
+    snake_args = {
+            "code": code,
+            "comment": comment,
+            "programming_language": proglang
+        }
+
     try:
         snake = SnakeVersion.objects.get(pk=json_req.get('parent'), user=request.user)
-        snake = snake.create_new_if_changed(code=code, comment=comment)
+        snake = snake.create_new_if_changed(**snake_args)
     except SnakeVersion.DoesNotExist:
-        snake = SnakeVersion(user=request.user, code=code, comment=comment, parent=None)
+        snake = SnakeVersion(user=request.user, parent=None, **snake_args)
         snake.save()
 
     if action == "run":
@@ -95,7 +135,11 @@ def snake_edit(request, snake):
         send_kill_command(snake.user)
         return redirect('snake_edit', snake_id=snake.id)
 
-    return render(request, 'ide/ide.html', {'form': form, 'snake': snake, 'profile': get_user_profile(request.user)})
+    proglangs = ProgrammingLanguage.objects.all()
+
+    print(proglangs)
+
+    return render(request, 'ide/ide.html', {'form': form, 'snake': snake, 'profile': get_user_profile(request.user), 'programming_languages': proglangs})
 
 
 @login_required

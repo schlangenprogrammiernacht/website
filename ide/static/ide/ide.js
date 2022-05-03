@@ -55,7 +55,7 @@ function setupEditor()
 {
     editor = ace.edit("editor");
     editor.setTheme("ace/theme/idle_fingers");
-    editor.session.setMode("ace/mode/c_cpp");
+    editor.session.setMode("ace/mode/" + editor_mode);
     editor.setShowPrintMargin(false);
     let textarea = $('#code').hide();
     editor.getSession().setValue(textarea.val());
@@ -151,6 +151,10 @@ function setupToolbar()
 
     $('#bt_disable_preview').click(disablePreview);
     $('#bt_enable_preview').click(enablePreview);
+
+    $('#sel_programming_language').change(function() {
+        window.location.href = '/snake/edit/lang/' + $('#sel_programming_language').val();
+    });
 }
 
 function setupShortcuts()
@@ -199,7 +203,8 @@ function updateCompileState(data)
 
     if (state == "not_compiled")
     {
-        window.setTimeout(pollCompileState, 1000);
+        $("#build_log").append($('<div/>').addClass('info').text("Build queue length: " + data.build_queue_size));
+        window.setTimeout(pollCompileState, 2000);
         return;
     }
     else
@@ -269,7 +274,8 @@ function save(action, title)
         'action': action,
         'code': editor.getSession().getValue(),
         'comment': title,
-        'parent': snake_id
+        'parent': snake_id,
+        'programming_language': programming_language
     };
 
     $.post('/snake/edit/save', JSON.stringify(json_req), function(data) {
@@ -305,7 +311,7 @@ function showLoadDialog(data)
     list.empty();
 
     $.each(data.versions, function(i, version) {
-        let item = $('<div><div>'+version.version+'</div><div>'+version.date+'</div><div>'+version.title+'</div></div>');
+        let item = $('<div><div>'+version.version+'</div><div>'+version.date+'</div><div>'+version.programming_language+'</div><div>'+version.title+'</div></div>');
         item.click(function() {
             list.children('div').removeClass('selected');
             item.addClass('selected');

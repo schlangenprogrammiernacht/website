@@ -38,14 +38,21 @@ class Command(BaseCommand):
 
     def run_build_script(self, snake_version):
         BUILD_CWD = "../gameserver/docker4bots/"
-        BUILD_SCRIPT = "./1_build_spn_cpp_bot.sh"
+        BUILD_SCRIPT = "./1_build_spn_bot.sh"
 
         code_file = self.write_code_to_temp_file(snake_version)
         print(f"{now()}: Code written to {code_file}")
 
         try:
             clean_name = self.cleanup_username(snake_version.user.username)
-            cmd = [BUILD_SCRIPT, str(snake_version.id), clean_name, code_file]
+            cmd = [
+                    BUILD_SCRIPT,
+                    snake_version.programming_language.slug,
+                    str(snake_version.id),
+                    clean_name,
+                    code_file,
+                    snake_version.programming_language.file_extension]
+
             print(f"{now()}: Running: {cmd}")
             return_code, data = self.get_output_json(cmd, cwd=BUILD_CWD)
             print(f"{now()}: subprocess completed: {return_code}")

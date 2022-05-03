@@ -68,6 +68,10 @@
     padding-left:10px;
 }
 
+#build_log div {
+	white-space: pre-wrap;
+}
+
 #build_log .err {
     color:red;
 }
@@ -83,8 +87,19 @@
 
 button, .button {
     color:white;
-    border: none;
-    background-color: #b28e27;
+    border: 1px solid #ccc;
+    background-color: #7e580e;
+    border-radius:1em;
+    margin:5px 5px;
+    padding:3px 10px;
+    font-size:14pt;
+    text-decoration: none;
+}
+
+select {
+    color:white;
+    border: 1px solid #ccc;
+    background-color: #465c13;
     border-radius:1em;
     margin:5px 5px;
     padding:3px 10px;
@@ -191,6 +206,11 @@ div.modal>div>footer {
 }
 
 #load_dialog .list>div>div:nth-child(3)
+{
+    width:6em; text-align: left;
+}
+
+#load_dialog .list>div>div:nth-child(4)
 {
     width:400px; text-align: left;
 }
