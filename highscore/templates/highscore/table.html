@@ -37,6 +37,7 @@
             <tr>
                 <th class="two wide">Position</th>
                 <th class="nine wide">User</th>
+                <th class="nine wide">Language used</th>
                 <th class="five wide right aligned">Value</th>
             </tr>
         </thead>
@@ -45,6 +46,7 @@
             <tr>
                 <td>{{score.position}}</td>
                 <td>{{score.user__username}}</td>
+                <td>{{score.language}}</td>
                 <td class="right aligned">{{score.score|floatformat:1}}</td>
             </tr>
         {% endfor %}
