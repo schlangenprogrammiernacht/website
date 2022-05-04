@@ -58,8 +58,9 @@ def table(request, data, usr, title, rotate):
 
 
 def score(request):
-    data = get_relevant_games().values('user__username').annotate(score=Max('final_mass'), language=F('snake_version__programming_language__readable_name')).order_by('-score')
-    print(data)
+    data = get_relevant_games().values('user__username').annotate(
+            score=Max('final_mass'),
+            language=F('snake_version__programming_language__readable_name')).order_by('-score')
     if request.user.is_authenticated:
         usr = get_relevant_games().filter(user=request.user).aggregate(score=Max('final_mass'))
         if usr['score'] == None:
