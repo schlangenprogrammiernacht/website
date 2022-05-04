@@ -6,7 +6,7 @@ from django.core.exceptions import PermissionDenied, SuspiciousOperation
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods
-from core.models import ApiKey, SnakeVersion, ServerCommand, get_user_profile, LiveStats
+from core.models import ApiKey, SnakeVersion, ServerCommand, get_user_profile, LiveStats, ProgrammingLanguage
 
 class bot_api(object):
     def __init__(self, f):
@@ -251,5 +251,12 @@ def stats(request):
     for tup in SnakeVersion.COMPILE_STATE_CHOICES:
         state = tup[0]
         buildstats[state] = SnakeVersion.objects.filter(compile_state=state).count()
+
+    languages = ProgrammingLanguage.objects.all()
+    for lang in languages:
+        buildstats[lang.slug] = {}
+        for tup in SnakeVersion.COMPILE_STATE_CHOICES:
+            state = tup[0]
+            buildstats[lang.slug][state] = SnakeVersion.objects.filter(compile_state=state, programming_language=lang).count()
 
     return JsonResponse(stats_dict(livestats, buildstats))
