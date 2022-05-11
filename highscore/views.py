@@ -58,7 +58,9 @@ def table(request, data, usr, title, rotate):
 
 
 def score(request):
-    data = get_relevant_games().values('user__username').annotate(score=Max('final_mass')).order_by('-score')
+    data = get_relevant_games().values('user__username').annotate(
+            score=Max('final_mass'),
+            language=F('snake_version__programming_language__readable_name')).order_by('-score')
     if request.user.is_authenticated:
         usr = get_relevant_games().filter(user=request.user).aggregate(score=Max('final_mass'))
         if usr['score'] == None:
@@ -69,7 +71,9 @@ def score(request):
 
 
 def maxmass(request):
-    data = get_relevant_games().values('user__username').annotate(score=Max('maximum_mass')).order_by('-score')
+    data = get_relevant_games().values('user__username').annotate(
+            score=Max('maximum_mass'),
+            language=F('snake_version__programming_language__readable_name')).order_by('-score')
     if request.user.is_authenticated:
         usr = get_relevant_games().filter(user=request.user).aggregate(score=Max('maximum_mass'))
         if usr['score'] == None:
@@ -82,7 +86,8 @@ def maxmass(request):
 def maxage(request):
     data = get_relevant_games().\
         values('user__username').\
-        annotate(score=Max(F('end_frame')-F('start_frame'))).\
+        annotate(score=Max(F('end_frame')-F('start_frame')),
+                 language=F('snake_version__programming_language__readable_name')).\
         exclude(user__username__in=settings.HIGHSCORE_BLACKLIST).\
         order_by('-score')
 
@@ -100,7 +105,7 @@ def consumerate(request):
         score=Max(ExpressionWrapper(
             (F('natural_food_consumed') + F('carrison_food_consumed') + F('hunted_food_consumed'))
             / (F('end_frame') - F('start_frame')), output_field=models.FloatField())
-        )
+        ), language=F('snake_version__programming_language__readable_name')
     ).order_by('-score')
 
     if request.user.is_authenticated:
@@ -117,7 +122,7 @@ def consumerate(request):
 def kills(request):
     data = get_relevant_games().\
         values('killer__username').\
-        annotate(score=Count('killer_id')).\
+        annotate(score=Count('killer_id'), language=F('snake_version__programming_language__readable_name')).\
         order_by('-score').\
         annotate(user__username=F('killer__username'))
 
@@ -133,7 +138,7 @@ def kills(request):
 def deaths(request):
     data = get_relevant_games().\
         values('user__username').\
-        annotate(score=Count('user_id')).\
+        annotate(score=Count('user_id'), language=F('snake_version__programming_language__readable_name')).\
         order_by('score')
 
     if request.user.is_authenticated:
