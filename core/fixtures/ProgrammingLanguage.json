@@ -7,7 +7,7 @@
       "readable_name": "C++",
       "file_extension": "cpp",
       "editor_mode": "c_cpp"
-      }
+    }
   },
   {
     "model": "core.ProgrammingLanguage",
@@ -17,6 +17,6 @@
       "readable_name": "Rust",
       "file_extension": "rs",
       "editor_mode": "rust"
-      }
+    }
   }
 ]
