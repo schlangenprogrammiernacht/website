@@ -7,13 +7,13 @@ import math
 # set up persistent variables, etc.
 def init(api):
     # remove the default color
-    api.clearColors()
+    api.clear_colors()
 
     # I'm green!
-    api.addColor(40, 255, 0)
-    api.addColor(20, 128, 0)
-    api.addColor(10,  64, 0)
-    api.addColor(20, 128, 0)
+    api.add_color(40, 255, 0)
+    api.add_color(20, 128, 0)
+    api.add_color(10,  64, 0)
+    api.add_color(20, 128, 0)
     return True
 
 
@@ -30,17 +30,17 @@ def init(api):
 # The Api object also provides information about the world around you. See the
 # documentation for more details.
 def step(api):
-    deltaAngle = 0.0
+    delta_angle = 0.0
     boost      = False
     success    = True
 
     # let's start by moving in a large circle. Please note that all angles are
     # represented in radians, where -π to +π is a full circle.
-    deltaAngle = 0.001
+    delta_angle = 0.001
 
     # check for other snakes
-    for seg in api.getSegments():
-        if not seg.isSelf and seg.dist < 20:
+    for seg in api.segments:
+        if not seg.is_self and seg.dist < 20:
             # you can send log messages to your browser or any other viewer with the
             # appropriate Viewer Key.
             api.log("Oh no, I'm going to die!")
@@ -51,4 +51,4 @@ def step(api):
     # Signal that everything is ok. Return false here if anything goes wrong but
     # you want to shut down cleanly
 
-    return success, deltaAngle, boost
+    return success, delta_angle, boost
